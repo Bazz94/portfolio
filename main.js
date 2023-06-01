@@ -10,16 +10,14 @@ space360Texture.colorSpace = THREE.SRGBColorSpace;
 space360Texture.anisotropy = 4;
 space360Texture.matrixAutoUpdate = true;
 
-  
-
 var backgroundSphere = new THREE.Mesh(
-  new THREE.SphereGeometry(300, 64, 64),
+  new THREE.SphereGeometry(550, 64, 64),
   new THREE.MeshBasicMaterial({
     map: space360Texture,
     side: THREE.BackSide,
     transparent: true,
-    opacity: 0.8,
-    color: 0x555555
+    opacity: 1,
+    color: 0x333333
   })
 );
 scene.add(backgroundSphere);
@@ -32,89 +30,150 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Set up camera
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.setZ(30);
-camera.position.setX(10);
-camera.position.setY(10);
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0,0,0);
 
 // temp controls
-const controls = new OrbitControls(camera, renderer.domElement);
+// const controls = new OrbitControls(camera, renderer.domElement);
+// controls.enableZoom = false;
+// controls.minDistance = 50;
+// controls.maxDistance = 50;
 
 // Set up helpers
 const gridHelper = new THREE.GridHelper(200, 50);
 //scene.add(gridHelper);
 
 // add stars
-
-Array(1000).fill().forEach(addStar);
+Array(2000).fill().forEach(addStar);
 
 // add sun
-const sun1 = createSun(14.5, 1, 0xdddd00);
-const sun4 = createSun(14.6, 0.5, 0xeeee00);
-const sun2 = createSun(14.8, 0.5, 0xaaaa00);
+const sun1 = createSun(14.8, 1, 0xdddd00);
+const sun4 = createSun(14.85, 0.5, 0xeeee00);
+const sun2 = createSun(14.9, 0.5, 0xaaaa00);
 const sun3 = createSun(15, 0.5, 0xffee00);
 scene.add( sun1,  sun2,  sun3,  sun4);
-
 // add sunlight
 const sunLight = new THREE.PointLight(0xffffff);
 scene.add(sunLight);
 
-const sizeFactor = 1;
+const sizeFactor = 0.3;
 
 // add Mercury
-const mercury = createPlanet(0.75 * sizeFactor , "2k_mercury.jpg");
+const mercury = createPlanet(0.38 * sizeFactor , "2k_mercury.jpg");
 scene.add(mercury);
 
-const venus = createPlanet(0.93 * sizeFactor, "2k_venus_surface.jpg");
+const venus = createPlanet(0.94 * sizeFactor, "2k_venus_surface.jpg");
 scene.add(venus);
 
-const earth = createPlanet(1 * sizeFactor, "2k_earth_daymap.jpg");
+const earth = createPlanet(0.99 * sizeFactor, "2k_earth_daymap.jpg");
+const earthClouds = createPlanet(1 * sizeFactor, "2k_earth_clouds.jpg", 0.5);
+scene.add(earthClouds);
 scene.add(earth);
+const moon = createPlanet(0.2 * sizeFactor, "2k_moon.jpg");
+scene.add(moon);
 
-const mars = createPlanet(0.83 * sizeFactor, "2k_mars.jpg");
+const mars = createPlanet(0.53 * sizeFactor, "2k_mars.jpg");
 scene.add(mars);
 
-const jupiter = createPlanet(1.26 * sizeFactor, "2k_jupiter.jpg");
+const jupiter = createPlanet(11 * sizeFactor, "2k_jupiter.jpg");
 scene.add(jupiter);
 
-const saturn = createPlanet(1.21 * sizeFactor, "2k_saturn.jpg");
+const saturn = createPlanet(9.9 * sizeFactor, "2k_saturn.jpg");
 scene.add(saturn);
 
-const uranus = createPlanet(1.09 * sizeFactor, "2k_uranus.jpg");
+const uranus = createPlanet(4 * sizeFactor, "2k_uranus.jpg");
 scene.add(uranus);
 
-const neptune = createPlanet(1.08 * sizeFactor, "2k_neptune.jpg");
+const neptune = createPlanet(3.7 * sizeFactor, "2k_neptune.jpg");
 scene.add(neptune);
 
 
 
-//
+document.addEventListener('mousemove', onMouseMove, false);
+document.addEventListener('wheel', onScroll, false);
 
+let trip = 0;
+
+camera.position.set(earth.position.x, earth.position.y, earth.position.z);
+camera.lookAt(sun1.position);
 //render loop
 function animate() {
   requestAnimationFrame(animate);
 
-  sun1.rotation.y -= 0.001
-  sun2.rotation.z += 0.001
-  sun3.rotation.x += 0.001
-  sun4.rotation.z += 0.001
-  sun4.rotation.y += 0.001
+  sun1.rotation.y -= 0.001;
+  sun2.rotation.z += 0.001;
+  sun3.rotation.x += 0.001;
+  sun4.rotation.z += 0.001;
+  sun4.rotation.y += 0.001;
 
-  const distanceFactor = 50;
-  const sunRadius = 0;
-  const speedFactor = 0.0001;
+  earth.rotation.y -= 0.01;
+  earthClouds.rotation.y -= 0.011;
+  earthClouds.rotation.x += 0.0005;
 
-  orbit(mercury, sunRadius + (0.57 * distanceFactor), speedFactor / 0.62);
-  orbit(venus, sunRadius + (0.77 * distanceFactor), speedFactor / 0.2);
+  const distanceFactor = 20;
+  const sunRadius = 15;
+  const speedFactor = 0.00002;
+
+  orbit(mercury, sunRadius + (0.39 * distanceFactor), speedFactor / 0.62);
+  orbit(venus, sunRadius + (0.72 * distanceFactor), speedFactor / 0.2);
+  earthClouds.position.set(earth.position.x, earth.position.y, earth.position.z);
   orbit(earth, sunRadius + (1 * distanceFactor), speedFactor / 1);
-  orbit(mars, sunRadius + (1.27 * distanceFactor), speedFactor / 2.3);
-  orbit(jupiter, sunRadius + (1.71 * distanceFactor), speedFactor / 3.82);
-  orbit(saturn, sunRadius + (2.23 * distanceFactor), speedFactor / 4.80);
-  orbit(uranus, sunRadius + (2.95 * distanceFactor), speedFactor / 6.9);
-  orbit(neptune, sunRadius + (3.5 * distanceFactor), speedFactor / 6.9);
 
-  controls.update();
+  earth.add(moon);
+  orbit(moon, 1, 0.0000005);
 
+  orbit(mars, sunRadius + (1.52 * distanceFactor), speedFactor / 2.3);
+  orbit(jupiter, sunRadius + (5 * distanceFactor), speedFactor / 3.82);
+  orbit(saturn, sunRadius + (9 * distanceFactor), speedFactor / 4.80);
+  orbit(uranus, sunRadius + (15 * distanceFactor), speedFactor / 6.9);
+  orbit(neptune, sunRadius + (25 * distanceFactor), speedFactor / 6.9, 100);
+
+  orbit(camera, sunRadius + (1 * distanceFactor), speedFactor / 1, -6);
+
+  // if (trip >= 0 && trip < 10) {
+  //   controls.target = sun1.position;
+  //   controls.minDistance = 50;
+  //   controls.maxDistance = 50;
+  // }
+  // if (trip > 10 && trip < 20) {
+  //   controls.target = mercury.position;
+  //   controls.minDistance = 10;
+  //   controls.maxDistance = 10;
+  // }
+  // if (trip > 20 && trip < 30) {
+  //   controls.target = venus.position;
+  // }
+  // if (trip > 30 && trip < 40) {
+  //   controls.target = earth.position;
+  // }
+  // if (trip > 40 && trip < 50) {
+  //   controls.target = mars.position;
+  // }
+  // if (trip > 50 && trip < 60) {
+  //   controls.target = jupiter.position;
+  // }
+  // if (trip > 60 && trip < 70) {
+  //   controls.target = saturn.position;
+  // }
+  // if (trip > 70 && trip < 80) {
+  //   controls.target = uranus.position;
+  // }
+  // if (trip > 80 && trip < 90) {
+  //   controls.target = neptune.position;
+  // }
+
+ 
+  //camera.position.set(earth.position.x*2, earth.position.y*2, earth.position.z*2);
+  camera.lookAt(new THREE.Vector3(
+    earth.position.x * 0.95,
+    earth.position.y * 0.95,
+    earth.position.z * 0.95,
+    ));
+  
+  
+
+  
+  //controls.update();
   renderer.render(scene, camera);
 }
 animate();
@@ -122,11 +181,11 @@ animate();
 
 // helper methods
 
-function orbit(object ,radius, speed) {
-  const angle = Date.now() * speed;
+function orbit(object, radius, speed, offset = 0) {
+  const angle = (Date.now() + (offset * 1000)) * speed;
   const x = Math.cos(angle) * radius;
   const z = Math.sin(angle) * radius;
-  object.position.set(x,0,z);
+  object.position.set(x, 0, z);
 }
 
 function createSun(size, opacity, color) {
@@ -139,16 +198,16 @@ function createSun(size, opacity, color) {
 }
 
 //create planet 
-function createPlanet(size, texture_url, ) {
+function createPlanet(size, texture_url, opacity = 1) {
   const texture = new THREE.TextureLoader().load(`/${texture_url}`);
   const geometry = new THREE.SphereGeometry(size, 64, 64);
-  const material = new THREE.MeshStandardMaterial({ map: texture});
+  const material = new THREE.MeshStandardMaterial({ map: texture, opacity: opacity, transparent: 1, color: 0xdddddd});
   const planet = new THREE.Mesh(geometry, material);
   return planet;
 } 
 
 function addStar() {
-  const geometry = new THREE.SphereGeometry(0.25, 32, 32);
+  const geometry = new THREE.SphereGeometry(0.2, 32, 32);
   const material = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: THREE.MathUtils.randFloatSpread(0.5) + 0.5, transparent: true});
   const star = new THREE.Mesh(geometry, material);
 
@@ -158,11 +217,35 @@ function addStar() {
   while (Math.sqrt(x * x + y * y + z * z) < MIN_DISTANCE) {
     [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(500));
   }
-
-
-  
-  
-
   star.position.set(x,y,z);
   scene.add(star);
+}
+
+
+function onMouseMove(event) {
+  // Calculate normalized device coordinates
+  const mouse = new THREE.Vector2();
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  // Update the mouse position
+  // Do something with the mouse position
+  //console.log(mouse.x, mouse.y);
+}
+
+function onScroll(event) {
+  // Get the scroll wheel delta
+  const delta = event.deltaY;
+  console.log(trip);
+  // Do something with the scroll wheel delta
+  // For example, you can zoom the camera based on the scroll direction
+  if (delta < 0) {
+    // Zoom in
+    trip += 1;
+    if (trip > 90) trip = 90; 
+  } else {
+    // Zoom out
+    trip -= 1;
+    if (trip < 0) trip = 0; 
+  }
 }
