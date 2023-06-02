@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 *.pnj
 *.jpg
+.eslintrc.json
+.gitattributes
