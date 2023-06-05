@@ -1,21 +1,30 @@
 import * as THREE from 'three';
 
 class Body {
-  constructor(size = 0.2, color = 0xffffff, velocity = new THREE.Vector3(0, 0, 0), isLightSource = false) {
+  constructor(size = 0.2, color = 0xffffff, isLightSource = false) {
     this.color = color; // hex color
     this.size = size; // int
-    this.velocity = velocity // THREE.vector3
+    this.velocity = new THREE.Vector3(0,0,0); // THREE.vector3
     this.isLightSource = isLightSource; // bool
     const geometry = new THREE.SphereGeometry(size, 32, 32);
-    const material = new THREE.MeshBasicMaterial({ color: color });
+    let material;
+    if (isLightSource) {
+      material = new THREE.MeshBasicMaterial({ color: color ,transparent: true});
+    } else {
+      material = new THREE.MeshStandardMaterial({ color: color });
+    }
     const mesh = new THREE.Mesh(geometry, material);
     this.mesh = mesh;
     this.gravityArray = [];
+    this.light = null;
+    if (isLightSource) {
+      this.light = new THREE.PointLight(0xffffff);
+      this.mesh.add(this.light);
+    }
+    this.trail = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0)];
   }
 
-  // set gravityArray(newValue) {
-  //   this.gravityArray = newValue;
-  // }
+
 
   applyGravity = function() {
     if (this.gravityArray == null || this.gravityArray.length == 0) {
