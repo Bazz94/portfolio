@@ -23,10 +23,12 @@ let interval = 1 / 30;
 
 // Set up scene
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x071126);
 
 // Set up renderer
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#background'),
+  antialias: true,
 });
 renderer.frustumCulling = true;
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -34,55 +36,61 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Set up camera
 const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0,0,-20);
+camera.position.set(0,0,-40);
 
 // temp controls
 const controls = new OrbitControls(camera, renderer.domElement);
-//controls.enableZoom = false;
+// controls.enableZoom = false;
 // controls.zoom0 = 10;
 // controls.enableRotate = false;
 
 // Set up helpers
 const gridHelper = new THREE.GridHelper(200, 100);
 gridHelper.rotateX(90 * (Math.PI / 180)); //grid is on z axis now
-//scene.add(gridHelper);
+// scene.add(gridHelper);
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.09);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.04);
 scene.add(ambientLight);
 
-addStars(300);
+addStars(600);
 
-var sun = new Body(1, 0xffdb61, true);
+let sun = new Body(2, 0xffdb61, true);
 scene.add(sun.mesh);
 sun.velocity.add(new THREE.Vector3(0, 0, 0));
 
-var planet = new Body(0.1, 0xcfcd87);
+let planet = new Body(0.1, 0xcfcd87);
 scene.add(planet.mesh);
 planet.mesh.position.set(3, 0, 0);
-planet.velocity.add(new THREE.Vector3(0, 0.2, 0));
+planet.velocity.add(new THREE.Vector3(0, 0.378, 0));
 
-var planet2 = new Body(0.15, 0xfa7f7b);
+let planet2 = new Body(0.15, 0xfa7f7b);
 scene.add(planet2.mesh);
 planet2.mesh.position.set(7, 0, 0);
-planet2.velocity.add(new THREE.Vector3(0, -0.137, 0));
+planet2.velocity.add(new THREE.Vector3(0, -0.243, 0));
 
-var planet3 = new Body(0.25, 0x35c9d1);
+let planet3 = new Body(0.25, 0x35c9d1);
 scene.add(planet3.mesh);
-planet3.mesh.position.set(12, 0, 0);
-planet3.velocity.add(new THREE.Vector3(0, 0.1049, 0));
+planet3.mesh.position.set(-12.5, 0, 0);
+planet3.velocity.add(new THREE.Vector3(0, -0.183, 0));
 
-var moon = new Body(0.03, 0xcccccc);
+let moon = new Body(0.03, 0xcccccc);
 scene.add(moon.mesh);
 moon.mesh.position.set(1.4, 0, 0);
-moon.velocity.add(new THREE.Vector3(0.07, 0.25, 0.05));
+moon.velocity.add(new THREE.Vector3(0.045, 0.45, 0.01));
 planet3.mesh.add(moon.mesh);
 
-var planet4 = new Body(0.4, 0xb6a1e2);
+let planet4 = new Body(0.3, 0xb6a1e2);
 scene.add(planet4.mesh);
-planet4.mesh.position.set(17, 0, 0);
-planet4.velocity.add(new THREE.Vector3(0, 0.09, 0));
+planet4.mesh.position.set(22, 0, 0);
+planet4.velocity.add(new THREE.Vector3(0, 0.138, 0));
 
-let world = [sun, planet, planet2, planet3];
+let interaction = new Body(0.5, 0x101010);
+scene.add(interaction.mesh);
+interaction.mesh.material.transparent = true;
+interaction.mesh.material.opacity = 0.4;
+interaction.mesh.position.set(0,0,0);
+
+let world = [sun, planet, planet2, planet3, moon, planet4, interaction];
 sun.gravityArray = world;
 planet.gravityArray = world;
 planet2.gravityArray = world;
@@ -90,11 +98,16 @@ planet3.gravityArray = world;
 moon.gravityArray = world;
 planet4.gravityArray = world;
 
+
 const planetLineTrail = new LineTrail(scene, planet);
 const planet2LineTrail = new LineTrail(scene, planet2, 4);
 const planet3LineTrail = new LineTrail(scene, planet3, 6);
-const moonLineTrail = new LineTrail(scene, moon, 0.08);
+const moonLineTrail = new LineTrail(scene, moon, 0.06);
 const planet4LineTrail = new LineTrail(scene, planet4, 8);
+
+document.addEventListener('mousedown', onMouseDown, false);
+document.addEventListener('mouseup', onMouseUp, false);
+
 
 //render loop locked to 30fps
 function animate() {
@@ -127,6 +140,16 @@ function animate() {
     planet4LineTrail.updateLines();
     moonLineTrail.updateLines(true);
 
+    if (isMouseDown) { /* empty */ 
+      interaction.mesh.position.set(hitscan.x, hitscan.y, 0);
+      interaction.size = Math.min(interaction.size + 0.03, 1) ;
+      interaction.mesh.material.opacity = Math.min(interaction.mesh.material.opacity + 0.008, 1);
+    } else {
+      interaction.size = Math.max(interaction.size - 0.06, 0.002);
+      interaction.mesh.material.opacity = Math.max(interaction.mesh.material.opacity - 0.008, 0.4)
+    }
+    console.log(interaction.size);
+
     controls.update();
     //////////////////////////////
     renderer.render(scene, camera);
@@ -140,11 +163,11 @@ function addStars(number) {
   const vertices = [];
   const material = new THREE.PointsMaterial({size: 0.05});
   for (let i = 0; i < number; i++) {
-    const MIN_DISTANCE = 20;
-    let [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(50));
+    const MIN_DISTANCE = 21;
+    let [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(200));
 
     while (Math.sqrt(x * x + y * y + z * z) < MIN_DISTANCE) {
-      [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(50));
+      [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(200));
     }
     vertices.push(x, y, z);
   }
@@ -153,77 +176,31 @@ function addStars(number) {
   scene.add(particles);
 }
 
-function particleTrail(obj, time = 1) {
-  //const count = time;
-  const vertices = [];
-  vertices.push(0, 0, 0);
-  const position = obj.mesh.position;
-  const geometry = new THREE.BufferGeometry();
-  const material = new THREE.PointsMaterial({ size: 0.001 });
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  const particle = new THREE.Points(geometry, material);
-  particle.position.set(position.x, position.y, position.z);
-  scene.add(particle);
-  setTimeout(function () {
-    scene.remove(particle);
-    if (particle.material.map) {
-      particle.material.map.dispose();
-    }
-  }, time * 1000);
-} 
+var vec = new THREE.Vector3(); // create once and reuse
+var hitscan = new THREE.Vector3(); // create once and reuse
+let isMouseDown = false;
+function onMouseDown() {
+  isMouseDown = true;
 
+  vec.set(
+    (event.clientX / window.innerWidth) * 2 - 1,
+    - (event.clientY / window.innerHeight) * 2 + 1,
+    0.5);
 
+  vec.unproject(camera);
 
-// Controls
+  vec.sub(camera.position).normalize();
 
-// let deltaX;
-// let deltaY;
-// let tempx = 0;
-// let tempy = 0;
-// function onMouseMove(event) {
-//   // Calculate normalized device coordinates
-//   const mouse = new THREE.Vector2();
-//   mouse.x = event.clientX;
-//   mouse.y = event.clientY;
-//   if (mouseDown) {
-//     if (mouse.x > tempx) {
-//       deltaX = -1;
-//     } else {
-//       deltaX = 1;
-//     }
-//     tempx = mouse.x;
-//     if (mouse.y < tempy) {
-//       deltaY = 1;
-//     } else {
-//       deltaY = -1;
-//     }
-//     tempy = mouse.y;
-//   }
-// }
+  var distance = - camera.position.z / vec.z;
 
-// let mouseDown = false;
-// function onMouseDown(event) {
-//   mouseDown = true;
-//   console.log(mouseDown);
-// }
-// function onMouseUp(event) {
-//   mouseDown = false;
-//   console.log(mouseDown);
-// }
+  hitscan.copy(camera.position).add(vec.multiplyScalar(distance));
+  // Call a function or perform actions when the mouse click is down
+  console.log('Mouse click down');
+}
 
-// let trip = 0;
-// function onScroll(event) {
-//   // Get the scroll wheel delta
-//   const delta = event.deltaY;
-//   console.log(trip);
-//   // Do something with the scroll wheel delta
-//   // For example, you can zoom the camera based on the scroll direction
-//   if (delta < 0) {
-//     // Zoom in
-//     trip += 1;
-//   } else {
-//     // Zoom out
-//     trip -= 1;
-//   }
-// }
-
+// Mouse up event handler
+function onMouseUp() {
+  isMouseDown = false;
+  // Call a function or perform actions when the mouse click is up
+  console.log('Mouse click up');
+}

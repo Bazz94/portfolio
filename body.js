@@ -1,14 +1,14 @@
 import * as THREE from 'three';
 
 class Body {
-  constructor(size = 0.2, color = 0xffffff, isLightSource = false) {
+  constructor(size = 0.2, color = 0xffffff, isLightSource = false, interaction = false) {
     this.color = color; // hex color
     this.size = size; // int
     this.velocity = new THREE.Vector3(0,0,0); // THREE.vector3
     this.isLightSource = isLightSource; // bool
     const geometry = new THREE.SphereGeometry(size, 32, 32);
     let material;
-    if (isLightSource) {
+    if (isLightSource || interaction) {
       material = new THREE.MeshBasicMaterial({ color: color ,transparent: true});
     } else {
       material = new THREE.MeshStandardMaterial({ color: color });
@@ -40,14 +40,13 @@ class Body {
         direction.subVectors(item.mesh.position, this.mesh.position);
         direction.normalize();
         const velocity = direction.multiplyScalar(newGravity);
-        velocity.clampLength(0,1);
         this.velocity.add(velocity);
       }
     }
   }
 
   calculateGravity(otherMass, distance) {
-    const gravitationalConstant = 0.13; // Gravitational constant in m^3 kg^−1 s^−2  // original 6.67
+    const gravitationalConstant = 0.13 * 0.8; // Gravitational constant in m^3 kg^−1 s^−2  // original 6.67
     const gravity = (gravitationalConstant * this.size * otherMass) / (distance * distance);
     let ratio;
     if (this.size > otherMass) {

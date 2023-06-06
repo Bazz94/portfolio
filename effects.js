@@ -49,7 +49,7 @@ class LineTrail {
         } else {
           this.scene.add(line);
         }
-        const opacityDecay = 0.009 / this.time;
+        const opacityDecay = 0.015 / this.time;
         this.lines.forEach((item) => {
           item.material.opacity = Math.max(item.material.opacity - opacityDecay, 0);
         });
