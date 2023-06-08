@@ -12,12 +12,8 @@ class LineTrail {
     this.scene = scene;
   }
 
-  timerDone(lines, line, isMoon = false) {
-    if (isMoon) {
-      this.obj.mesh.parent.remove(line);
-    } else {
-      this.scene.remove(line);
-    }
+  timerDone(lines, line) {
+    this.scene.remove(line);
     if (lines.length > 1) {
       lines.shift();
     }
@@ -26,7 +22,7 @@ class LineTrail {
     }
   }
 
-  updateLines = (isMoon = false) => {
+  updateLines = () => {
     const pos1 = this.obj.mesh.position.clone();
     const pos2 = this.secondPos.clone();
     const pos3 = this.thirdPos.clone();
@@ -44,18 +40,14 @@ class LineTrail {
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const material = new THREE.LineBasicMaterial({ color: this.obj.color, transparent: true, opacity: 0.2 });
         const line = new THREE.Line(geometry, material);
-        if (isMoon) { /* empty */
-          this.obj.mesh.parent.add(line);
-        } else {
-          this.scene.add(line);
-        }
+        this.scene.add(line);
         const opacityDecay = 0.015 / this.time;
         this.lines.forEach((item) => {
           item.material.opacity = Math.max(item.material.opacity - opacityDecay, 0);
         });
         this.lines.push(line);
         setTimeout(() => {
-          this.timerDone(this.lines, line, isMoon);
+          this.timerDone(this.lines, line);
         }, this.time * 1000);
         this.count = 2;
       }

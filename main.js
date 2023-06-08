@@ -36,13 +36,17 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Set up camera
 const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.up.set(0, 0, -1);
 camera.position.set(0,0,-40);
+camera.lookAt(0,0,0);
+
 
 // temp controls
-const controls = new OrbitControls(camera, renderer.domElement);
+// const controls = new OrbitControls(camera, renderer.domElement);
 // controls.enableZoom = false;
 // controls.zoom0 = 10;
 // controls.enableRotate = false;
+
 
 // Set up helpers
 const gridHelper = new THREE.GridHelper(200, 100);
@@ -70,19 +74,23 @@ planet2.velocity.add(new THREE.Vector3(0, -0.243, 0));
 
 let planet3 = new Body(0.25, 0x35c9d1);
 scene.add(planet3.mesh);
-planet3.mesh.position.set(-12.5, 0, 0);
-planet3.velocity.add(new THREE.Vector3(0, -0.183, 0));
+planet3.mesh.position.set(-13, 0, 0);
+planet3.velocity.add(new THREE.Vector3(0, -0.182, 0));
 
 let moon = new Body(0.03, 0xcccccc);
 scene.add(moon.mesh);
-moon.mesh.position.set(1.4, 0, 0);
-moon.velocity.add(new THREE.Vector3(0.045, 0.45, 0.01));
-planet3.mesh.add(moon.mesh);
+moon.mesh.position.set(-13.7, 0, 0);
+moon.velocity.add(new THREE.Vector3(-0.02, -0.275, 0.00));
 
-let planet4 = new Body(0.3, 0xb6a1e2);
+let planet4 = new Body(0.31, 0xb6a1e2);
 scene.add(planet4.mesh);
-planet4.mesh.position.set(22, 0, 0);
-planet4.velocity.add(new THREE.Vector3(0, 0.138, 0));
+planet4.mesh.position.set(24, 0, 0);
+planet4.velocity.add(new THREE.Vector3(0, 0.135, 0));
+
+let moon2 = new Body(0.03, 0xcccccc);
+scene.add(moon2.mesh);
+moon2.mesh.position.set(25, 0, 0);
+moon2.velocity.add(new THREE.Vector3(0, 0.23, 0.00));
 
 let interaction = new Body(0.5, 0x101010);
 scene.add(interaction.mesh);
@@ -90,23 +98,41 @@ interaction.mesh.material.transparent = true;
 interaction.mesh.material.opacity = 0.4;
 interaction.mesh.position.set(0,0,0);
 
-let world = [sun, planet, planet2, planet3, moon, planet4, interaction];
+let world = [sun, planet, planet2, planet3, moon, planet4, moon2, interaction];
 sun.gravityArray = world;
 planet.gravityArray = world;
 planet2.gravityArray = world;
 planet3.gravityArray = world;
 moon.gravityArray = world;
 planet4.gravityArray = world;
+moon2.gravityArray = world;
 
 
 const planetLineTrail = new LineTrail(scene, planet);
 const planet2LineTrail = new LineTrail(scene, planet2, 4);
 const planet3LineTrail = new LineTrail(scene, planet3, 6);
-const moonLineTrail = new LineTrail(scene, moon, 0.06);
+const moonLineTrail = new LineTrail(scene, moon, 0.4);
 const planet4LineTrail = new LineTrail(scene, planet4, 8);
+const moon2LineTrail = new LineTrail(scene, moon2, 0.4);
 
 document.addEventListener('mousedown', onMouseDown, false);
 document.addEventListener('mouseup', onMouseUp, false);
+document.addEventListener('mousewheel', onMouseWheel, false);
+document.addEventListener('mousemove', handleMouseMove);
+let actionSwitch = document.getElementById('action-switch');
+
+const Actions = {
+  NONE: 'none',
+  GRAVITYWELL: 'gravityWell',
+  CREATEPLANET: 'createPlanet',
+  FOLLOW: 'follow'
+} 
+let action = Actions.NONE;
+
+let mouseStart, mouseEnd, mouseTravel, mouseTravelDistance;
+let newPlanet;
+let newPlanetTrailLines;
+let newPlanetVelocity;
 
 
 //render loop locked to 30fps
@@ -118,45 +144,133 @@ function animate() {
     
     sun.applyGravity();
     sun.mesh.position.add(sun.velocity.clampLength(0, 1));
-
+    planetLineTrail.updateLines();
     planet.applyGravity();
     planet.mesh.position.add(planet.velocity.clampLength(0, 1));
-
+    planet2LineTrail.updateLines();
     planet2.applyGravity();
     planet2.mesh.position.add(planet2.velocity.clampLength(0, 1));
-
+    planet3LineTrail.updateLines();
     planet3.applyGravity();
     planet3.mesh.position.add(planet3.velocity.clampLength(0, 1));
-
+    moonLineTrail.updateLines();
     moon.applyGravity();
     moon.mesh.position.add(moon.velocity.clampLength(0, 1));
-
+    planet4LineTrail.updateLines();
     planet4.applyGravity();
     planet4.mesh.position.add(planet4.velocity.clampLength(0, 1));
+    moon2LineTrail.updateLines();
+    moon2.applyGravity();
+    moon2.mesh.position.add(moon2.velocity.clampLength(0, 1));
     
-    planetLineTrail.updateLines();
-    planet2LineTrail.updateLines();
-    planet3LineTrail.updateLines();
-    planet4LineTrail.updateLines();
-    moonLineTrail.updateLines(true);
+    
+    // TODO: add kill switch to stop actions
+    if (!actionSwitch.checked) {
+        action = Actions.CREATEPLANET;
+      } else {
+        action = Actions.GRAVITYWELL;
+      }
 
-    if (isMouseDown) { /* empty */ 
-      interaction.mesh.position.set(hitscan.x, hitscan.y, 0);
-      interaction.size = Math.min(interaction.size + 0.03, 1) ;
-      interaction.mesh.material.opacity = Math.min(interaction.mesh.material.opacity + 0.008, 1);
-    } else {
-      interaction.size = Math.max(interaction.size - 0.06, 0.002);
-      interaction.mesh.material.opacity = Math.max(interaction.mesh.material.opacity - 0.008, 0.4)
+    if (action === Actions.NONE) {
+      camera.position.set(0, 0, -40);
+      camera.lookAt(0, 0, 0);
     }
-    console.log(interaction.size);
 
-    controls.update();
+    if (action === Actions.FOLLOW) {
+      const a = sun.mesh.position.clone();
+      const b = planet4.mesh.position.clone();
+      const result = calculatePerpendicularPoint(a, b, 10);
+      result.z = -10;
+      camera.position.copy(result);
+      camera.lookAt(new THREE.Vector3(
+        planet4.mesh.position.x * 0.9,
+        planet4.mesh.position.y * 0.9,
+        planet4.mesh.position.z * 0.9,
+      ));
+    }
+    
+    //console.log(action);
+    if (action === Actions.GRAVITYWELL) {
+      if (isMouseDown) { /* empty */ 
+        interaction.mesh.position.set(hitscan.x, hitscan.y, 0);
+        interaction.size = Math.min(interaction.size + 0.03, 1) ;
+        interaction.mesh.material.opacity = Math.min(interaction.mesh.material.opacity + 0.01, 1);
+      } else {
+        interaction.size = Math.max(interaction.size - 0.06, 0.002);
+        interaction.mesh.material.opacity = Math.max(interaction.mesh.material.opacity - 0.02, 0.1)
+      }
+    }
+    if (action == Actions.CREATEPLANET) {
+      if (isMouseDown) {
+        if (!newPlanet) {
+          mouseStart = hitscan.clone();
+          newPlanet = new Body(0.20, 0xf0ba81);
+          scene.add(newPlanet.mesh);
+          newPlanet.mesh.position.set(hitscan.x, hitscan.y, 0);
+          newPlanetTrailLines = new LineTrail(scene, newPlanet, 4);
+          world = [...world, newPlanet];
+          newPlanet.gravityArray = world;
+          // update other bodies
+          sun.gravityArray = world;
+          planet.gravityArray = world;
+          planet2.gravityArray = world;
+          planet3.gravityArray = world;
+          moon.gravityArray = world;
+          planet4.gravityArray = world;
+          moon2.gravityArray = world;
+        }
+        mouseTravel = hitscan.clone();
+        const distanceVector = new THREE.Vector3();
+        distanceVector.subVectors(mouseTravel, mouseStart);
+        const distance = distanceVector.length();
+        mouseTravelDistance = distance;
+
+      } else {
+        if (newPlanet) {
+          if (mouseStart != hitscan) {
+            if (!newPlanetVelocity) {
+              mouseEnd = hitscan.clone();
+              newPlanetVelocity = new THREE.Vector3();
+              newPlanetVelocity.subVectors(mouseEnd, mouseStart);
+              newPlanetVelocity.normalize();
+              const distanceMouseVector = new THREE.Vector3();
+              distanceMouseVector.subVectors(mouseEnd, mouseStart);
+              const distanceMouse = distanceMouseVector.length();
+              const distanceVector = new THREE.Vector3();
+              distanceVector.subVectors(sun.mesh.position, newPlanet.mesh.position);
+              const distance = distanceVector.length();
+              newPlanetVelocity.multiplyScalar(distanceMouse / Math.sqrt(distance));
+              newPlanetVelocity.divideScalar(10);
+              newPlanetVelocity.clampLength(0, 0.3)
+              newPlanet.velocity.add(newPlanetVelocity);
+            }
+          }
+        }
+      }
+    }
+    if (newPlanetVelocity) {
+      newPlanet.applyGravity();
+      newPlanet.mesh.position.add(newPlanet.velocity.clampLength(0, 1));
+      newPlanetTrailLines.updateLines();
+    }
+    mouseActionLabel(action, isMouseDown);
+
+    //controls.update();
     //////////////////////////////
     renderer.render(scene, camera);
     delta = delta % interval;
   }
 }
 animate();
+
+function calculatePerpendicularPoint(sunPosition, planetPosition, distance) {
+  const sunToPlanet = new THREE.Vector3().subVectors(planetPosition, sunPosition);
+  const zAxis = new THREE.Vector3(0, 0, 1);
+  const perpendicular = new THREE.Vector3().crossVectors(sunToPlanet, zAxis);
+  perpendicular.normalize();
+  const thirdPoint = new THREE.Vector3().addScaledVector(perpendicular, distance);
+  return thirdPoint;
+}
 
 function addStars(number) {
   const geometry = new THREE.BufferGeometry();
@@ -176,31 +290,102 @@ function addStars(number) {
   scene.add(particles);
 }
 
-var vec = new THREE.Vector3(); // create once and reuse
-var hitscan = new THREE.Vector3(); // create once and reuse
+
 let isMouseDown = false;
 function onMouseDown() {
   isMouseDown = true;
-
-  vec.set(
-    (event.clientX / window.innerWidth) * 2 - 1,
-    - (event.clientY / window.innerHeight) * 2 + 1,
-    0.5);
-
-  vec.unproject(camera);
-
-  vec.sub(camera.position).normalize();
-
-  var distance = - camera.position.z / vec.z;
-
-  hitscan.copy(camera.position).add(vec.multiplyScalar(distance));
-  // Call a function or perform actions when the mouse click is down
-  console.log('Mouse click down');
+  //console.log('Mouse click down');
 }
 
 // Mouse up event handler
 function onMouseUp() {
   isMouseDown = false;
-  // Call a function or perform actions when the mouse click is up
-  console.log('Mouse click up');
+  //console.log('Mouse click up');
+}
+
+function onMouseWheel(event) {
+  let delta = 0;
+  if (event.wheelDelta) {  // For Chrome and Opera
+    delta = event.wheelDelta;
+  } else if (event.detail) {  // For Firefox
+    delta = -event.detail;
+  }
+  // Update the zoom level based on the delta value
+  if (delta > 0) {
+    //camera.position.add(new THREE.Vector3(0,-1,0));
+    action = Actions.NONE;
+  } else if (delta < 0) {
+    //camera.position.add(new THREE.Vector3(0, 1, 0));
+    action = Actions.FOLLOW;
+  }
+}
+
+let vec = new THREE.Vector3(); // create once and reuse
+let hitscan = new THREE.Vector3(); // create once and reuse
+let mouse = {x: 0, y: 0};
+function handleMouseMove(event) {
+  // Get the mouse position relative to the element
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
+  vec.set(
+    (mouse.x / window.innerWidth) * 2 - 1,
+    - (mouse.y / window.innerHeight) * 2 + 1,
+    0.5);
+  vec.unproject(camera);
+  vec.sub(camera.position).normalize();
+  let distance = - camera.position.z / vec.z;
+  hitscan.copy(camera.position).add(vec.multiplyScalar(distance));
+}
+
+let pos = false; // set mouse position when mouse down
+let firedOnce = null;  // makes sure create planet label only appears once
+let actionLabel = document.getElementById('actionLabel');
+function mouseActionLabel(action, mouseDown) {
+
+  if (action === Actions.GRAVITYWELL) {
+    if (interaction.size > 0.002) {
+      actionLabel.style.opacity = '1';
+      pos = mouse;
+      if (mouseDown) {
+        actionLabel.style.left = (pos.x - 20) + 'px';
+        actionLabel.style.top = (pos.y - 50) + 'px';
+      }
+      if (planetLineTrail.count % 2) {
+        actionLabel.innerText = 'Gravity ' + (interaction.size * 10).toFixed(2);
+      }
+    } else {
+      actionLabel.style.opacity = '0';
+    }
+  } 
+
+  if (action === Actions.CREATEPLANET) {
+    if (mouseDown) {
+      if (firedOnce === null) {
+        firedOnce = false;
+      }
+      if (firedOnce === false) {
+        actionLabel.style.opacity = '1';
+        if (!pos) {
+          pos = mouse;
+          actionLabel.style.left = (pos.x - 20) + 'px';
+          actionLabel.style.top = (pos.y - 50) + 'px';
+        }
+        if (newPlanet) {
+          if (planetLineTrail.count % 2) {
+            actionLabel.innerText = 'Velocity ' + (mouseTravelDistance).toFixed(2);
+          }
+        }
+      }
+    } else {
+      if (firedOnce === false) {
+        firedOnce = true;
+      }
+      pos = null;
+      actionLabel.style.opacity = '0';
+    }
+  }
+}
+
+function degreesToRadians(degrees) {
+  return degrees * (Math.PI / 180);
 }
