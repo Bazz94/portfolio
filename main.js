@@ -42,7 +42,7 @@ camera.lookAt(0,0,0);
 
 
 // temp controls
-// const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
 // controls.enableZoom = false;
 // controls.zoom0 = 10;
 // controls.enableRotate = false;
@@ -58,41 +58,41 @@ scene.add(ambientLight);
 
 addStars(600);
 
-let sun = new Body(2, 0xffdb61, true);
+let sun = new Body(scene,2, 0xffdb61, true);
 scene.add(sun.mesh);
 sun.velocity.add(new THREE.Vector3(0, 0, 0));
 
-let planet = new Body(0.1, 0xcfcd87);
+let planet = new Body(scene,0.1, 0xcfcd87);
 scene.add(planet.mesh);
 planet.mesh.position.set(3, 0, 0);
 planet.velocity.add(new THREE.Vector3(0, 0.378, 0));
 
-let planet2 = new Body(0.15, 0xfa7f7b);
+let planet2 = new Body(scene,0.15, 0xfa7f7b);
 scene.add(planet2.mesh);
 planet2.mesh.position.set(7, 0, 0);
 planet2.velocity.add(new THREE.Vector3(0, -0.243, 0));
 
-let planet3 = new Body(0.25, 0x35c9d1);
+let planet3 = new Body(scene,0.25, 0x35c9d1);
 scene.add(planet3.mesh);
 planet3.mesh.position.set(-13, 0, 0);
 planet3.velocity.add(new THREE.Vector3(0, -0.182, 0));
 
-let moon = new Body(0.03, 0xcccccc);
+let moon = new Body(scene,0.03, 0xcccccc);
 scene.add(moon.mesh);
 moon.mesh.position.set(-13.7, 0, 0);
 moon.velocity.add(new THREE.Vector3(-0.02, -0.275, 0.00));
 
-let planet4 = new Body(0.31, 0xb6a1e2);
+let planet4 = new Body(scene,0.31, 0xb6a1e2);
 scene.add(planet4.mesh);
 planet4.mesh.position.set(24, 0, 0);
 planet4.velocity.add(new THREE.Vector3(0, 0.135, 0));
 
-let moon2 = new Body(0.03, 0xcccccc);
+let moon2 = new Body(scene,0.031, 0xcccccc);
 scene.add(moon2.mesh);
 moon2.mesh.position.set(25, 0, 0);
 moon2.velocity.add(new THREE.Vector3(0, 0.23, 0.00));
 
-let interaction = new Body(0.5, 0x101010);
+let interaction = new Body(scene,0.5, 0x101010);
 scene.add(interaction.mesh);
 interaction.mesh.material.transparent = true;
 interaction.mesh.material.opacity = 0.4;
@@ -109,11 +109,17 @@ moon2.gravityArray = world;
 
 
 const planetLineTrail = new LineTrail(scene, planet);
+planet.lineTrail = planetLineTrail;
 const planet2LineTrail = new LineTrail(scene, planet2, 4);
+planet2.lineTrail = planet2LineTrail
 const planet3LineTrail = new LineTrail(scene, planet3, 6);
+planet3.lineTrail = planet3LineTrail
 const moonLineTrail = new LineTrail(scene, moon, 0.4);
+moon.lineTrail = moonLineTrail
 const planet4LineTrail = new LineTrail(scene, planet4, 8);
+planet4.lineTrail = planet4LineTrail
 const moon2LineTrail = new LineTrail(scene, moon2, 0.4);
+moon2.lineTrail = moon2LineTrail
 
 document.addEventListener('mousedown', onMouseDown, false);
 document.addEventListener('mouseup', onMouseUp, false);
@@ -125,7 +131,6 @@ const Actions = {
   NONE: 'none',
   GRAVITYWELL: 'gravityWell',
   CREATEPLANET: 'createPlanet',
-  FOLLOW: 'follow'
 } 
 let action = Actions.NONE;
 
@@ -170,24 +175,6 @@ function animate() {
       } else {
         action = Actions.GRAVITYWELL;
       }
-
-    if (action === Actions.NONE) {
-      camera.position.set(0, 0, -40);
-      camera.lookAt(0, 0, 0);
-    }
-
-    if (action === Actions.FOLLOW) {
-      const a = sun.mesh.position.clone();
-      const b = planet4.mesh.position.clone();
-      const result = calculatePerpendicularPoint(a, b, 10);
-      result.z = -10;
-      camera.position.copy(result);
-      camera.lookAt(new THREE.Vector3(
-        planet4.mesh.position.x * 0.9,
-        planet4.mesh.position.y * 0.9,
-        planet4.mesh.position.z * 0.9,
-      ));
-    }
     
     //console.log(action);
     if (action === Actions.GRAVITYWELL) {
@@ -204,10 +191,11 @@ function animate() {
       if (isMouseDown) {
         if (!newPlanet) {
           mouseStart = hitscan.clone();
-          newPlanet = new Body(0.20, 0xf0ba81);
+          newPlanet = new Body(scene,0.20, 0xf0ba81);
           scene.add(newPlanet.mesh);
           newPlanet.mesh.position.set(hitscan.x, hitscan.y, 0);
           newPlanetTrailLines = new LineTrail(scene, newPlanet, 4);
+          newPlanet.lineTrail = newPlanetTrailLines;
           world = [...world, newPlanet];
           newPlanet.gravityArray = world;
           // update other bodies
@@ -255,22 +243,13 @@ function animate() {
     }
     mouseActionLabel(action, isMouseDown);
 
-    //controls.update();
+    controls.update();
     //////////////////////////////
     renderer.render(scene, camera);
     delta = delta % interval;
   }
 }
 animate();
-
-function calculatePerpendicularPoint(sunPosition, planetPosition, distance) {
-  const sunToPlanet = new THREE.Vector3().subVectors(planetPosition, sunPosition);
-  const zAxis = new THREE.Vector3(0, 0, 1);
-  const perpendicular = new THREE.Vector3().crossVectors(sunToPlanet, zAxis);
-  perpendicular.normalize();
-  const thirdPoint = new THREE.Vector3().addScaledVector(perpendicular, distance);
-  return thirdPoint;
-}
 
 function addStars(number) {
   const geometry = new THREE.BufferGeometry();
@@ -386,6 +365,18 @@ function mouseActionLabel(action, mouseDown) {
   }
 }
 
-function degreesToRadians(degrees) {
-  return degrees * (Math.PI / 180);
-}
+// function degreesToRadians(degrees) {
+//   return degrees * (Math.PI / 180);
+// }
+
+// Follow camera
+// const a = sun.mesh.position.clone();
+// const b = planet4.mesh.position.clone();
+// const result = calculatePerpendicularPoint(a, b, 10);
+// result.z = -10;
+// camera.position.copy(result);
+// camera.lookAt(new THREE.Vector3(
+//   planet4.mesh.position.x * 0.9,
+//   planet4.mesh.position.y * 0.9,
+//   planet4.mesh.position.z * 0.9,
+// ));

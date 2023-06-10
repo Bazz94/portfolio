@@ -10,6 +10,7 @@ class LineTrail {
     this.count = 0;
     this.lines = [];
     this.scene = scene;
+    this.disabled = false;
   }
 
   timerDone(lines, line) {
@@ -23,6 +24,9 @@ class LineTrail {
   }
 
   updateLines = () => {
+    if (this.disabled) {
+      return false;
+    }
     const pos1 = this.obj.mesh.position.clone();
     const pos2 = this.secondPos.clone();
     const pos3 = this.thirdPos.clone();
