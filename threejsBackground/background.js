@@ -10,11 +10,11 @@
 // neptune: #b6a1e2
 // background: #0b1a3b
 
-import './style.css';
 import * as THREE from 'three';
 import { OrbitControls }  from 'three/examples/jsm/controls/OrbitControls';
 import Body from './body.js';
 import LineTrail from './effects.js';
+import { DOMAIN } from './../private.js';
 
 let clock = new THREE.Clock();
 let delta = 0;
@@ -34,15 +34,16 @@ renderer.frustumCulling = true;
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
+
 // Set up camera
 const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.up.set(0, 0, -1);
-camera.position.set(0,0,-40);
+camera.up.set(0, -1, 0);
+camera.position.set(0,0,-40); //-40
 camera.lookAt(0,0,0);
-
+//camera.position.y = 32;
 
 // temp controls
-const controls = new OrbitControls(camera, renderer.domElement);
+//const controls = new OrbitControls(camera, renderer.domElement);
 // controls.enableZoom = false;
 // controls.zoom0 = 10;
 // controls.enableRotate = false;
@@ -58,47 +59,52 @@ scene.add(ambientLight);
 
 addStars(600);
 
-let sun = new Body(scene,2, 0xffdb61, true);
+let sun = new Body(scene, 2, 0xffdb61, true);
 scene.add(sun.mesh);
 sun.velocity.add(new THREE.Vector3(0, 0, 0));
 
-let planet = new Body(scene,0.1, 0xcfcd87);
+let planet = new Body(scene, 0.1, 0xcfcd87);
 scene.add(planet.mesh);
 planet.mesh.position.set(3, 0, 0);
 planet.velocity.add(new THREE.Vector3(0, 0.378, 0));
 
-let planet2 = new Body(scene,0.15, 0xfa7f7b);
+let planet2 = new Body(scene, 0.15, 0xfa7f7b);
 scene.add(planet2.mesh);
 planet2.mesh.position.set(7, 0, 0);
 planet2.velocity.add(new THREE.Vector3(0, -0.243, 0));
 
-let planet3 = new Body(scene,0.25, 0x35c9d1);
+let planet3 = new Body(scene, 0.25, 0x35c9d1);
 scene.add(planet3.mesh);
 planet3.mesh.position.set(-13, 0, 0);
 planet3.velocity.add(new THREE.Vector3(0, -0.182, 0));
 
-let moon = new Body(scene,0.03, 0xcccccc);
+let moon = new Body(scene, 0.03, 0xcccccc);
 scene.add(moon.mesh);
 moon.mesh.position.set(-13.7, 0, 0);
 moon.velocity.add(new THREE.Vector3(-0.02, -0.275, 0.00));
 
-let planet4 = new Body(scene,0.31, 0xb6a1e2);
+let planet4 = new Body(scene, 0.31, 0xb6a1e2);
 scene.add(planet4.mesh);
 planet4.mesh.position.set(24, 0, 0);
 planet4.velocity.add(new THREE.Vector3(0, 0.135, 0));
 
-let moon2 = new Body(scene,0.031, 0xcccccc);
+let moon2 = new Body(scene, 0.031, 0xcccccc);
 scene.add(moon2.mesh);
 moon2.mesh.position.set(25, 0, 0);
 moon2.velocity.add(new THREE.Vector3(0, 0.23, 0.00));
 
-let interaction = new Body(scene,0.5, 0x101010);
+let planet5 = new Body(scene, 0.26, 0xfb6247);
+scene.add(planet5.mesh);
+planet5.mesh.position.set(-36, 0, 0);
+planet5.velocity.add(new THREE.Vector3(0, -0.112, 0));
+
+let interaction = new Body(scene,0.5, 0x101010, false, true);
 scene.add(interaction.mesh);
 interaction.mesh.material.transparent = true;
 interaction.mesh.material.opacity = 0.4;
 interaction.mesh.position.set(0,0,0);
 
-let world = [sun, planet, planet2, planet3, moon, planet4, moon2, interaction];
+let world = [sun, planet, planet2, planet3, moon, planet4, moon2, interaction, planet5];
 sun.gravityArray = world;
 planet.gravityArray = world;
 planet2.gravityArray = world;
@@ -106,6 +112,7 @@ planet3.gravityArray = world;
 moon.gravityArray = world;
 planet4.gravityArray = world;
 moon2.gravityArray = world;
+planet5.gravityArray = world;
 
 
 const planetLineTrail = new LineTrail(scene, planet);
@@ -120,11 +127,13 @@ const planet4LineTrail = new LineTrail(scene, planet4, 8);
 planet4.lineTrail = planet4LineTrail
 const moon2LineTrail = new LineTrail(scene, moon2, 0.4);
 moon2.lineTrail = moon2LineTrail
+const planet5LineTrail = new LineTrail(scene, planet5, 12);
+planet5.lineTrail = planet5LineTrail
 
 document.addEventListener('mousedown', onMouseDown, false);
 document.addEventListener('mouseup', onMouseUp, false);
-document.addEventListener('mousewheel', onMouseWheel, false);
 document.addEventListener('mousemove', handleMouseMove);
+window.addEventListener('resize', onResize);
 let actionSwitch = document.getElementById('action-switch');
 
 const Actions = {
@@ -138,15 +147,37 @@ let mouseStart, mouseEnd, mouseTravel, mouseTravelDistance;
 let newPlanet;
 let newPlanetTrailLines;
 let newPlanetVelocity;
-
-
+let checked = localStorage.getItem('pMode');
+if (checked === undefined) {
+  localStorage.setItem('pMode', false);
+  actionSwitch.checked = false;
+  checked = false;
+} else {
+  actionSwitch.checked = checked === 'true' ? true : false;
+}
+renderer.render(scene, camera);
 //render loop locked to 30fps
 function animate() {
   requestAnimationFrame(animate);
+  if (actionSwitch.checked) {
+    if (checked != true) {
+      checked = true;
+      localStorage.setItem('pMode', true);
+    } 
+  } else {
+    if (checked != false) {
+      checked = false;
+      localStorage.setItem('pMode', false);
+    } 
+  }
+  if (actionSwitch.checked === true) {
+    return false;
+  }
   delta += clock.getDelta();
   if (delta > interval) {
-    ////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     
+
     sun.applyGravity();
     sun.mesh.position.add(sun.velocity.clampLength(0, 1));
     planetLineTrail.updateLines();
@@ -167,14 +198,10 @@ function animate() {
     moon2LineTrail.updateLines();
     moon2.applyGravity();
     moon2.mesh.position.add(moon2.velocity.clampLength(0, 1));
+    planet5LineTrail.updateLines();
+    planet5.applyGravity();
+    planet5.mesh.position.add(planet5.velocity.clampLength(0, 1));
     
-    
-    // TODO: add kill switch to stop actions
-    if (!actionSwitch.checked) {
-        action = Actions.CREATEPLANET;
-      } else {
-        action = Actions.GRAVITYWELL;
-      }
     
     //console.log(action);
     if (action === Actions.GRAVITYWELL) {
@@ -191,7 +218,7 @@ function animate() {
       if (isMouseDown) {
         if (!newPlanet) {
           mouseStart = hitscan.clone();
-          newPlanet = new Body(scene,0.20, 0xf0ba81);
+          newPlanet = new Body(scene, 0.20, 0xf0ba81);
           scene.add(newPlanet.mesh);
           newPlanet.mesh.position.set(hitscan.x, hitscan.y, 0);
           newPlanetTrailLines = new LineTrail(scene, newPlanet, 4);
@@ -242,14 +269,22 @@ function animate() {
       newPlanetTrailLines.updateLines();
     }
     mouseActionLabel(action, isMouseDown);
+    camera.position.y = getCameraY();
+    //controls.update();
 
-    controls.update();
-    //////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     renderer.render(scene, camera);
     delta = delta % interval;
   }
 }
 animate();
+
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
 function addStars(number) {
   const geometry = new THREE.BufferGeometry();
@@ -282,21 +317,16 @@ function onMouseUp() {
   //console.log('Mouse click up');
 }
 
-function onMouseWheel(event) {
-  let delta = 0;
-  if (event.wheelDelta) {  // For Chrome and Opera
-    delta = event.wheelDelta;
-  } else if (event.detail) {  // For Firefox
-    delta = -event.detail;
-  }
-  // Update the zoom level based on the delta value
-  if (delta > 0) {
-    //camera.position.add(new THREE.Vector3(0,-1,0));
-    action = Actions.NONE;
-  } else if (delta < 0) {
-    //camera.position.add(new THREE.Vector3(0, 1, 0));
-    action = Actions.FOLLOW;
-  }
+function getCameraY() {
+  // top is 0, bottom is -951 (2 pages)
+  const scrollDistance = 32; // y from 0 to 32
+  const scrollPosition = document.body.getBoundingClientRect().top;
+  const maxScrollPosition = -951;
+  let y;
+  y = scrollPosition * -1;
+  y = scrollPosition / maxScrollPosition * scrollDistance;
+  //console.log(y);
+  return y;
 }
 
 let vec = new THREE.Vector3(); // create once and reuse

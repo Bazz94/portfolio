@@ -1,0 +1,248 @@
+/* Set up */
+body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+#actionLabel {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  font-size: "12";
+  color: white;
+  opacity: "0";
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Performance switch */
+#performance-switch-container {
+  display: flex;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+#performance-switch-container .switchLabel {
+  z-index: 1;
+  font-size: 14px;
+  color: #eee;
+  margin: 5px 2px;
+  display: flex;
+  align-items: center;
+}
+#performance-switch-container .switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  margin: 5px;
+}
+#performance-switch-container .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+#performance-switch-container .switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #888;
+  transition: 0.4s;
+}
+#performance-switch-container .switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #ddd;
+  transition: 0.4s;
+}
+#performance-switch-container .switch input:checked + .slider {
+  background-color: #333;
+}
+#performance-switch-container .switch input:focus + .slider {
+  box-shadow: 0 0 1px #333;
+}
+#performance-switch-container .switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+#performance-switch-container .switch .slider.round {
+  border-radius: 34px;
+}
+#performance-switch-container .switch .slider.round:before {
+  border-radius: 50%;
+}
+
+/* Reusable CSS */
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Home page */
+/* Home page*/
+.home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  height: 100vh;
+}
+.home .center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: 90%;
+  width: 90%;
+}
+.home .center .actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 30%;
+}
+.home .center .actions .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+  width: 100%;
+}
+.home .center .actions .container .stack {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+.home .center .actions .container .stack .image {
+  width: inherit;
+  height: inherit;
+  transform: rotate(0deg);
+  position: absolute;
+}
+.home .center .actions .container .stack .action-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: 50px;
+  right: 50px;
+}
+.home .center .actions .container .stack .action-list .button {
+  color: #fff;
+  text-align: right;
+  margin: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.home .center .actions .container .stack .action-list .button:hover {
+  color: #ff0 !important;
+  transform: scale(1.03) !important;
+}
+.home .center .actions .spacer {
+  height: 50%;
+  width: 100%;
+}
+.home .center .middle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 40%;
+  height: 100%;
+  justify-content: center;
+}
+.home .center .middle .container {
+  height: 33%;
+  width: 100%;
+}
+.home .center .middle .container h1 {
+  font-size: 128px;
+  text-align: center;
+}
+.home .center .middle .container p {
+  font-size: 1.6rem;
+}
+.home .center .middle .spacer {
+  height: 34%;
+  width: 100%;
+}
+.home .center .projects {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 30%;
+}
+.home .center .projects .spacer {
+  height: 50%;
+  width: 100%;
+}
+.home .center .projects .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+  width: 100%;
+}
+.home .center .projects .container .stack {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+.home .center .projects .container .stack .image {
+  width: inherit;
+  height: inherit;
+  transform: rotate(180deg);
+  position: absolute;
+}
+.home .center .projects .container .stack .project-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  bottom: 50px;
+  left: 50px;
+}
+.home .center .projects .container .stack .project-list .button {
+  color: #fff;
+  text-align: left;
+  margin: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.home .center .projects .container .stack .project-list .button:hover {
+  color: #ff0 !important;
+  transform: scale(1.03) !important;
+}
+
+#home-btn {
+  color: #ff0;
+  transform: scale(1.03);
+}
+
+#none-btn {
+  color: #ff0;
+  transform: scale(1.03);
+}
+
+/* project1 page */
+.project1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  height: 100vh;
+}/*# sourceMappingURL=style.css.map */

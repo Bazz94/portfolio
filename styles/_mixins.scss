@@ -1,0 +1,23 @@
+/* Reusable CSS */
+@mixin flexCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin spacer($percentage) {
+  height: $percentage;
+  width: 100%;
+}
+
+@mixin imageInit($orientation) {
+  width: inherit;
+  height: inherit;
+  transform: rotate($orientation);
+}
+
+@mixin flex($direction) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: center;
+}

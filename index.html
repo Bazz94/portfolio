@@ -3,16 +3,73 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/style.css">
+    <script type="module" src="./ui/buttons.js"></script>
     <title>App</title>
   </head>
   <body>
-    <canvas id="background"></canvas>
-    <label id="actionLabel"> </label>
-    <label class="switch">
-      <label id="switchLabel"> Gravity Well</label>
-      <input id="action-switch" type="checkbox">
-      <span class="slider round"></span>
-    </label>
-    <script type="module" src="/main.js"></script>
+    <canvas id="background">
+      <label id="actionLabel"> </label>
+    </canvas>
+    <div id="performance-switch-container">
+      <label class="switchLabel">Performance mode</label>
+      <label class="switch">
+        <input id="action-switch" class="action-switch" type="checkbox">
+        <span class="slider round"></span>
+      </label>
+    </div>
+    <script type="module" src="./threejsBackground/background.js"></script>
+
+    <div class="main">
+      <section class="home">
+        <div class="center">
+          <!-- left side -->
+          <side class="actions">
+            <div class="container">
+              <div class="stack">
+                <img class="image" src="/corner.png">
+                <div class="action-list">
+                  <span class="button" id="none-btn">Disable Actions</span>
+                  <span class="button" id="spawnPlanet-btn">Spawn Planet</span>
+                  <span class="button" id="gravityWell-btn">Gravity Well</span>
+                </div>
+              </div>
+            </div>
+            <div class="spacer"></div>
+          </side>
+          <!-- center -->
+          <section class="middle">
+            <div class="container">
+              <h1>Welcome</h1>
+            </div>
+            <div class="spacer"></div>
+            <div class="container">
+              <p>I'm thrilled to present my coding journey and showcase the projects that reflect my skills, dedication, and love for
+              crafting clean, efficient software solutions. As I near the completion of my degree, I'm eager to transition from my
+              successful sales career into the dynamic world of software development.</p>
+            </div>
+          </section>
+          <!-- right side -->
+          <side class="projects">
+            <div class="spacer"></div>
+            <div class="container">
+              <div class="stack">
+                <img class="image" src="/corner.png">
+                <nav class="project-list">
+                  <span class="button" id="home-btn">Home</span>
+                  <span class="button" id="project1-btn">Project 1</span>
+                  <span class="button" id="project2-btn">Project 2</span>
+                  <span class="button" id="project3-btn">Project 3</span>
+                </nav>
+              </div>
+            </div>
+          </side>
+        </div>
+      </section>
+      <section class="project1">
+
+      </section>
+      </div>
+    </div>
   </body>
 </html>
