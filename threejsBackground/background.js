@@ -1,5 +1,5 @@
 // Colors
-// sun: #feca50
+// sun: #ffdb61
 // mercury: #cfcd87
 // venus: #fa7f7b
 // earth: #35c9d1

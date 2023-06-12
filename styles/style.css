@@ -1,9 +1,11 @@
 /* Set up */
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400&display=swap");
 body {
   margin: 0;
   width: 100vw;
   height: 100vh;
   overflow-x: hidden;
+  font-family: "Lato";
 }
 
 canvas {
@@ -108,13 +110,13 @@ canvas {
   flex-direction: row;
   justify-content: center;
   height: 90%;
-  width: 90%;
+  width: 100%;
 }
 .home .center .actions {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 30%;
+  width: 25%;
 }
 .home .center .actions .container {
   display: flex;
@@ -142,17 +144,6 @@ canvas {
   top: 50px;
   right: 50px;
 }
-.home .center .actions .container .stack .action-list .button {
-  color: #fff;
-  text-align: right;
-  margin: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-.home .center .actions .container .stack .action-list .button:hover {
-  color: #ff0 !important;
-  transform: scale(1.03) !important;
-}
 .home .center .actions .spacer {
   height: 50%;
   width: 100%;
@@ -161,7 +152,7 @@ canvas {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 40%;
+  width: 50%;
   height: 100%;
   justify-content: center;
 }
@@ -170,11 +161,21 @@ canvas {
   width: 100%;
 }
 .home .center .middle .container h1 {
-  font-size: 128px;
+  font-size: 8rem;
   text-align: center;
+  color: #eee;
+  letter-spacing: 0.8rem;
 }
 .home .center .middle .container p {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
+  letter-spacing: 0.1rem;
+  text-align: left;
+  color: #eee;
+  font-weight: 300;
+}
+.home .center .middle .container p::before {
+  content: "";
+  white-space: pre;
 }
 .home .center .middle .spacer {
   height: 34%;
@@ -184,7 +185,7 @@ canvas {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 30%;
+  width: 25%;
 }
 .home .center .projects .spacer {
   height: 50%;
@@ -216,26 +217,119 @@ canvas {
   bottom: 50px;
   left: 50px;
 }
-.home .center .projects .container .stack .project-list .button {
-  color: #fff;
-  text-align: left;
+
+.action-button {
+  color: #eee;
+  text-align: center;
   margin: 4px;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+          clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
   cursor: pointer;
 }
-.home .center .projects .container .stack .project-list .button:hover {
-  color: #ff0 !important;
-  transform: scale(1.03) !important;
+.action-button:hover {
+  color: #000;
+  background-color: #fbf919;
+  text-align: center;
+  transform: scale(1.03);
+  margin: 4px;
+  font-size: 1.1rem;
+  -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+          clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  cursor: pointer;
+}
+.action-button:hover::before {
+  content: "   ";
+  white-space: pre;
+}
+.action-button:hover::after {
+  content: "   ";
+  white-space: pre;
+}
+.action-button::before {
+  content: "   ";
+  white-space: pre;
+}
+.action-button::after {
+  content: "   ";
+  white-space: pre;
 }
 
-#home-btn {
-  color: #ff0;
+.selected-action-button {
+  color: #000;
+  background-color: #fbf919;
+  text-align: center;
   transform: scale(1.03);
+  margin: 4px;
+  font-size: 1.1rem;
+  -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+          clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  cursor: pointer;
+}
+.selected-action-button::before {
+  content: "   ";
+  white-space: pre;
+}
+.selected-action-button::after {
+  content: "   ";
+  white-space: pre;
 }
 
-#none-btn {
-  color: #ff0;
+.nav-button {
+  color: #eee;
+  text-align: center;
+  margin: 4px;
+  font-size: 1.1rem;
+  -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+          clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  cursor: pointer;
+}
+.nav-button:hover {
+  color: #000;
+  background-color: #fbf919;
+  text-align: center;
   transform: scale(1.03);
+  margin: 4px;
+  font-size: 1.1rem;
+  -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+          clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  cursor: pointer;
+}
+.nav-button:hover::before {
+  content: "   ";
+  white-space: pre;
+}
+.nav-button:hover::after {
+  content: "   ";
+  white-space: pre;
+}
+.nav-button::before {
+  content: "   ";
+  white-space: pre;
+}
+.nav-button::after {
+  content: "   ";
+  white-space: pre;
+}
+
+.selected-nav-button {
+  color: #000;
+  background-color: #fbf919;
+  text-align: center;
+  transform: scale(1.03);
+  margin: 4px;
+  font-size: 1.1rem;
+  -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+          clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  cursor: pointer;
+}
+.selected-nav-button::before {
+  content: "   ";
+  white-space: pre;
+}
+.selected-nav-button::after {
+  content: "   ";
+  white-space: pre;
 }
 
 /* project1 page */
