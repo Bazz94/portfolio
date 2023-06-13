@@ -1,13 +1,27 @@
+@import "./mixins";
 
 /* Set up */
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400&display=swap');
 
+:root {
+  @include mobile {
+    font-size: 14px;
+  }
+}
+
 body {
+  position: absolute;
+  background-color: #071126;
   margin: 0;
-  width: 100vw;
+  width: calc(100vw - 16px);
   height: 100vh;
   overflow-x: hidden;
   font-family: 'Lato';
+  margin-right: 16px; // space for scroll bar
+  @include mobile {
+    width: calc(calc(100vw - 16px) + 16px);
+    margin-right: 0px;
+  }
 }
 
 canvas {
@@ -101,10 +115,10 @@ canvas {
     }
 }
 
-@import "./mixins";
-
 .main {
   @include flex(column);
+  justify-content: center;
+  overflow-x: hidden;
 }
 
 /* Home page */
@@ -112,3 +126,9 @@ canvas {
 
 /* project1 page */
 @import "./project1";
+
+/* project2 page */
+@import "./project2";
+
+/* project3 page */
+@import "./project3";

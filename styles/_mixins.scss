@@ -1,4 +1,9 @@
 /* Reusable CSS */
+$buttonColor: #eee;
+$buttonHoverColor: #ffdb61;
+$textColor: #EDEDED;
+$textBackgroundColor: #c6503c;
+
 @mixin flexCenter {
   display: flex;
   justify-content: center;
@@ -14,10 +19,47 @@
   width: inherit;
   height: inherit;
   transform: rotate($orientation);
+  backdrop-filter: blur(1px); // TODO:
 }
 
 @mixin flex($direction) {
   display: flex;
   flex-direction: $direction;
   justify-content: center;
+}
+
+@mixin mobile($limit: 600px) {
+  @media (max-width: $limit) {
+    @content;
+  }
+}
+
+@mixin fadeIn() {
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@mixin fadeInBackgroundColor {
+  background-color: transparent;
+  animation: fadeInBackgroundColor 1s ease-in forwards;
+}
+
+@keyframes fadeInBackgroundColor {
+  0% {
+    background-color: transparent;
+  }
+
+  100% {
+    background-color: $textBackgroundColor;
+  }
 }

@@ -16,6 +16,8 @@ import Body from './body.js';
 import LineTrail from './effects.js';
 import { DOMAIN } from './../private.js';
 
+
+const isDesktopView = window.innerWidth > 600;
 let clock = new THREE.Clock();
 let delta = 0;
 // 30 fps
@@ -39,6 +41,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.up.set(0, -1, 0);
 camera.position.set(0,0,-40); //-40
+if (!isDesktopView) {
+  camera.position.set(0,0,-54);
+}
 camera.lookAt(0,0,0);
 //camera.position.y = 32;
 
@@ -57,7 +62,7 @@ gridHelper.rotateX(90 * (Math.PI / 180)); //grid is on z axis now
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.04);
 scene.add(ambientLight);
 
-addStars(600);
+addStars(700);
 
 let sun = new Body(scene, 2, 0xffdb61, true);
 scene.add(sun.mesh);
@@ -135,6 +140,9 @@ document.addEventListener('mouseup', onMouseUp, false);
 document.addEventListener('mousemove', handleMouseMove);
 window.addEventListener('resize', onResize);
 let actionSwitch = document.getElementById('action-switch');
+let disableButton = document.getElementById('disabled');
+let spawnPlanetButton = document.getElementById('spawnPlanet');
+let gravityWellButton = document.getElementById('gravityWell');
 
 const Actions = {
   NONE: 'none',
@@ -154,6 +162,9 @@ if (checked === undefined) {
   checked = false;
 } else {
   actionSwitch.checked = checked === 'true' ? true : false;
+}
+if (!isDesktopView) {
+  actionSwitch.checked = true;
 }
 renderer.render(scene, camera);
 //render loop locked to 30fps
@@ -202,7 +213,16 @@ function animate() {
     planet5.applyGravity();
     planet5.mesh.position.add(planet5.velocity.clampLength(0, 1));
     
-    
+    if (disableButton.className === 'selected-action-button') {
+      action = Actions.NONE;
+    }
+    if (spawnPlanetButton.className === 'selected-action-button') {
+      action = Actions.CREATEPLANET;
+    }
+    if (gravityWellButton.className === 'selected-action-button') {
+      action = Actions.GRAVITYWELL;
+    }
+
     //console.log(action);
     if (action === Actions.GRAVITYWELL) {
       if (isMouseDown) { /* empty */ 
@@ -284,6 +304,7 @@ function onResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.render(scene, camera);
 }
 
 function addStars(number) {
@@ -292,10 +313,10 @@ function addStars(number) {
   const material = new THREE.PointsMaterial({size: 0.05});
   for (let i = 0; i < number; i++) {
     const MIN_DISTANCE = 21;
-    let [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(200));
+    let [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(300));
 
     while (Math.sqrt(x * x + y * y + z * z) < MIN_DISTANCE) {
-      [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(200));
+      [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(300));
     }
     vertices.push(x, y, z);
   }
@@ -318,14 +339,14 @@ function onMouseUp() {
 }
 
 function getCameraY() {
-  // top is 0, bottom is -951 (2 pages)
-  const scrollDistance = 32; // y from 0 to 32
+  // top is 0, bottom is -2852 (2 pages)
+  const scrollDistance = 96; // y from 0 to 32
   const scrollPosition = document.body.getBoundingClientRect().top;
-  const maxScrollPosition = -951;
+  const maxScrollPosition = -2853;
   let y;
   y = scrollPosition * -1;
   y = scrollPosition / maxScrollPosition * scrollDistance;
-  //console.log(y);
+  //console.log(y, scrollPosition);
   return y;
 }
 
@@ -394,19 +415,3 @@ function mouseActionLabel(action, mouseDown) {
     }
   }
 }
-
-// function degreesToRadians(degrees) {
-//   return degrees * (Math.PI / 180);
-// }
-
-// Follow camera
-// const a = sun.mesh.position.clone();
-// const b = planet4.mesh.position.clone();
-// const result = calculatePerpendicularPoint(a, b, 10);
-// result.z = -10;
-// camera.position.copy(result);
-// camera.lookAt(new THREE.Vector3(
-//   planet4.mesh.position.x * 0.9,
-//   planet4.mesh.position.y * 0.9,
-//   planet4.mesh.position.z * 0.9,
-// ));

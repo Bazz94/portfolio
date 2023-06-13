@@ -1,11 +1,43 @@
-/* Set up */
+/* Reusable CSS */
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400&display=swap");
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeInBackgroundColor {
+  0% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: #c6503c;
+  }
+}
+/* Set up */
+@media (max-width: 600px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
 body {
+  position: absolute;
+  background-color: #071126;
   margin: 0;
-  width: 100vw;
+  width: calc(100vw - 16px);
   height: 100vh;
   overflow-x: hidden;
   font-family: "Lato";
+  margin-right: 16px;
+}
+@media (max-width: 600px) {
+  body {
+    width: calc(100vw - 16px + 16px);
+    margin-right: 0px;
+  }
 }
 
 canvas {
@@ -89,11 +121,12 @@ canvas {
   border-radius: 50%;
 }
 
-/* Reusable CSS */
 .main {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  justify-content: center;
+  overflow-x: hidden;
 }
 
 /* Home page */
@@ -102,7 +135,6 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   height: 100vh;
 }
 .home .center {
@@ -113,10 +145,20 @@ canvas {
   width: 100%;
 }
 .home .center .actions {
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 25%;
+  padding-left: 4rem;
+}
+@media (max-width: 1100px) {
+  .home .center .actions {
+    padding-left: 0rem;
+    opacity: 0 !important;
+    width: 0px;
+  }
 }
 .home .center .actions .container {
   display: flex;
@@ -127,13 +169,22 @@ canvas {
 }
 .home .center .actions .container .stack {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 10.5rem;
+  height: 10.5rem;
+}
+.home .center .actions .container .stack .actions-label {
+  position: absolute;
+  top: -2.4rem;
+  right: 2.7rem;
+  font-size: 1.5rem;
+  color: #eee;
 }
 .home .center .actions .container .stack .image {
   width: inherit;
   height: inherit;
   transform: rotate(0deg);
+  -webkit-backdrop-filter: blur(1px);
+          backdrop-filter: blur(1px);
   position: absolute;
 }
 .home .center .actions .container .stack .action-list {
@@ -141,14 +192,16 @@ canvas {
   flex-direction: column;
   justify-content: center;
   position: absolute;
-  top: 50px;
-  right: 50px;
+  top: 1.6rem;
+  right: 1.4rem;
 }
 .home .center .actions .spacer {
   height: 50%;
   width: 100%;
 }
 .home .center .middle {
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -156,25 +209,70 @@ canvas {
   height: 100%;
   justify-content: center;
 }
+@media (max-width: 1100px) {
+  .home .center .middle {
+    width: 100%;
+  }
+}
 .home .center .middle .container {
   height: 33%;
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 .home .center .middle .container h1 {
   font-size: 8rem;
   text-align: center;
-  color: #eee;
+  color: #EDEDED;
   letter-spacing: 0.8rem;
 }
-.home .center .middle .container p {
+@media (max-width: 1400px) {
+  .home .center .middle .container h1 {
+    font-size: 6rem;
+    margin-bottom: 0rem;
+    margin-top: 9rem;
+  }
+}
+@media (max-width: 600px) {
+  .home .center .middle .container h1 {
+    font-size: 4rem;
+    margin-bottom: 0rem;
+    margin-top: 9rem;
+  }
+}
+.home .center .middle .container .paragraph {
+  width: clamp(300px, 90%, 1000px);
+  padding: 1.1rem 10%;
+}
+.home .center .middle .container .paragraph .text {
   font-size: 1.4rem;
   letter-spacing: 0.1rem;
-  text-align: left;
-  color: #eee;
+  text-align: justify;
+  color: #EDEDED;
   font-weight: 300;
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
 }
-.home .center .middle .container p::before {
-  content: "";
+.home .center .middle .container .paragraph .text-red {
+  font-size: 1.4rem;
+  letter-spacing: 0.1rem;
+  text-align: justify;
+  color: #EDEDED;
+  font-weight: 300;
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+  background-color: #c6503c;
+  -webkit-clip-path: polygon(2% 0, 100% 0, 98% 100%, 0 100%);
+          clip-path: polygon(2% 0, 100% 0, 98% 100%, 0 100%);
+  background-color: transparent;
+  animation: fadeInBackgroundColor 1s ease-in forwards;
+}
+.home .center .middle .container .paragraph .text-red::before {
+  content: " ";
+  white-space: pre;
+}
+.home .center .middle .container .paragraph .text-red::after {
+  content: " ";
   white-space: pre;
 }
 .home .center .middle .spacer {
@@ -182,10 +280,20 @@ canvas {
   width: 100%;
 }
 .home .center .projects {
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 25%;
+  padding-right: 4rem;
+}
+@media (max-width: 1100px) {
+  .home .center .projects {
+    padding-right: 0rem;
+    opacity: 0 !important;
+    width: 0px;
+  }
 }
 .home .center .projects .spacer {
   height: 50%;
@@ -200,13 +308,22 @@ canvas {
 }
 .home .center .projects .container .stack {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 10.5rem;
+  height: 10.5rem;
+}
+.home .center .projects .container .stack .nav-label {
+  position: absolute;
+  bottom: -2.3rem;
+  left: 2.7rem;
+  font-size: 1.5rem;
+  color: #eee;
 }
 .home .center .projects .container .stack .image {
   width: inherit;
   height: inherit;
   transform: rotate(180deg);
+  -webkit-backdrop-filter: blur(1px);
+          backdrop-filter: blur(1px);
   position: absolute;
 }
 .home .center .projects .container .stack .project-list {
@@ -214,14 +331,14 @@ canvas {
   flex-direction: column;
   justify-content: center;
   position: absolute;
-  bottom: 50px;
-  left: 50px;
+  bottom: 1.6rem;
+  left: 1.4rem;
 }
 
 .action-button {
   color: #eee;
   text-align: center;
-  margin: 4px;
+  margin: 0.25rem;
   font-size: 1.1rem;
   -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
           clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
@@ -229,10 +346,10 @@ canvas {
 }
 .action-button:hover {
   color: #000;
-  background-color: #fbf919;
+  background-color: #ffdb61;
   text-align: center;
-  transform: scale(1.03);
-  margin: 4px;
+  transform: scale(1.04);
+  margin: 0.25rem;
   font-size: 1.1rem;
   -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
           clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
@@ -257,10 +374,10 @@ canvas {
 
 .selected-action-button {
   color: #000;
-  background-color: #fbf919;
+  background-color: #ffdb61;
   text-align: center;
-  transform: scale(1.03);
-  margin: 4px;
+  transform: scale(1.04);
+  margin: 0.25rem;
   font-size: 1.1rem;
   -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
           clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
@@ -278,7 +395,7 @@ canvas {
 .nav-button {
   color: #eee;
   text-align: center;
-  margin: 4px;
+  margin: 0.25rem;
   font-size: 1.1rem;
   -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
           clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
@@ -286,10 +403,10 @@ canvas {
 }
 .nav-button:hover {
   color: #000;
-  background-color: #fbf919;
+  background-color: #ffdb61;
   text-align: center;
-  transform: scale(1.03);
-  margin: 4px;
+  transform: scale(1.04);
+  margin: 0.25rem;
   font-size: 1.1rem;
   -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
           clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
@@ -314,10 +431,10 @@ canvas {
 
 .selected-nav-button {
   color: #000;
-  background-color: #fbf919;
+  background-color: #ffdb61;
   text-align: center;
-  transform: scale(1.03);
-  margin: 4px;
+  transform: scale(1.04);
+  margin: 0.25rem;
   font-size: 1.1rem;
   -webkit-clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
           clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
@@ -338,5 +455,20 @@ canvas {
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+
+/* project2 page */
+.project2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* project3 page */
+.project3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
 }/*# sourceMappingURL=style.css.map */

@@ -1,13 +1,10 @@
-$buttonColor: #eee;
-$buttonHoverColor: #fbf919;
-$textColor: #eee;
 
 @mixin selectedButton{
   color: #000;
   background-color: $buttonHoverColor;
   text-align: center;
-  transform: scale(1.03);
-  margin: 4px;
+  transform: scale(1.04);
+  margin: 0.25rem;
   font-size: 1.1rem;
   clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
   cursor: pointer;
@@ -24,7 +21,7 @@ $textColor: #eee;
 @mixin button($align) {
   color: $buttonColor;
   text-align: center;
-  margin: 4px;
+  margin: 0.25rem;
   font-size: 1.1rem;
   clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
   cursor: pointer;
@@ -45,24 +42,36 @@ $textColor: #eee;
 .home {
   @include flexCenter();
   height: 100vh;
-  height: 100vh;
   
   .center{
     @include flex(row);
     height: 90%;
     width: 100%;
-
     .actions {
+      @include fadeIn();
       @include flex(column);
       width: 25%;
+      padding-left: 4rem;
+      @include mobile(1100px) {
+        padding-left: 0rem;
+        opacity: 0 !important;
+        width: 0px;
+      }
       .container {
         @include flexCenter();
         @include spacer(50%);
         .stack {
           position: relative;
-          width: 200px;
-          height: 200px;
-      
+          width: 10.5rem;
+          height: 10.5rem;
+          
+          .actions-label {
+            position: absolute;
+            top: -2.4rem;
+            right: 2.7rem;
+            font-size: 1.5rem;
+            color: #eee;
+          }
           .image {
             @include imageInit(0deg);
             position: absolute;
@@ -71,9 +80,8 @@ $textColor: #eee;
           .action-list {
             @include flex(column);
             position: absolute;
-            top: 50px;
-            right: 50px;
-      
+            top: 1.6rem;
+            right: 1.4rem;
             // action buttons
           }
         }
@@ -84,28 +92,63 @@ $textColor: #eee;
     }
   
     .middle {
+      @include fadeIn();
       @include flex(column);
       width: 50%;
       height: 100%;
       justify-content: center;
+      @include mobile(1100px) {
+          width: 100%;
+      }
       .container {
         @include spacer(33%);
+        display: flex;
+        justify-content: center;
         h1 {
           font-size: 8rem;
           text-align: center;
           color: $textColor;
           letter-spacing: 0.8rem;
-          //margin-top: 10rem;
+          @include mobile(1400px) {
+            font-size: 6rem;
+            margin-bottom: 0rem;
+            margin-top: 9rem;
+          }
+          @include mobile {
+            font-size: 4rem;
+            margin-bottom: 0rem;
+            margin-top: 9rem;
+          }
         }
-        p {
-          font-size: 1.4rem;
-          letter-spacing: 0.1rem;
-          text-align: left;
-          color: $textColor;
-          font-weight: 300;
-          &::before {
-            content: '';
-            white-space: pre;
+        .paragraph {
+          width: clamp(300px, 90%, 1000px);
+          padding: 1.1rem 10%;
+          .text {
+            font-size: 1.4rem;
+            letter-spacing: 0.1rem;
+            text-align: justify;
+            color: $textColor;
+            font-weight: 300;
+            backdrop-filter: blur(2px); // TODO:
+          }
+          .text-red {
+            font-size: 1.4rem;
+            letter-spacing: 0.1rem;
+            text-align: justify;
+            color: $textColor;
+            font-weight: 300;
+            backdrop-filter: blur(2px); // TODO:
+            background-color: $textBackgroundColor;
+            clip-path: polygon(2% 0, 100% 0, 98% 100%, 0 100%);
+            @include fadeInBackgroundColor();
+            &::before {
+              content: ' ';
+              white-space: pre;
+            }
+            &::after {
+              content: ' ';
+              white-space: pre;
+            }
           }
         }
       }
@@ -115,8 +158,15 @@ $textColor: #eee;
     }
     
     .projects {
+      @include fadeIn();
       @include flex(column);
       width: 25%;
+      padding-right: 4rem;
+      @include mobile(1100px) {
+        padding-right: 0rem;
+        opacity: 0 !important;
+        width: 0px;
+      }
       .spacer {
         @include spacer(50%);
       }
@@ -125,8 +175,15 @@ $textColor: #eee;
         @include spacer(50%);
         .stack {
           position: relative;
-          width: 200px;
-          height: 200px;
+          width: 10.5rem;
+          height: 10.5rem;
+          .nav-label {
+              position: absolute;
+              bottom: -2.3rem;
+              left: 2.7rem;
+              font-size: 1.5rem;
+              color: #eee;
+            }
           .image {
             @include imageInit(180deg);
             position: absolute;
@@ -134,8 +191,8 @@ $textColor: #eee;
           .project-list {
             @include flex(column);
             position: absolute;
-            bottom: 50px;
-            left: 50px;
+            bottom: 1.6rem;
+            left: 1.4rem;
             
             // project buttons
           }
