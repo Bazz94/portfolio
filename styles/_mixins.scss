@@ -1,8 +1,22 @@
 /* Reusable CSS */
-$buttonColor: #eee;
-$buttonHoverColor: #ffdb61;
+$buttonColor: #EDEDED;
+$buttonHoverColor: rgba(255, 219, 97, 1);
 $textColor: #EDEDED;
-$textBackgroundColor: #c6503c;
+$textBackgroundColor: rgba(198, 80, 60, 0.9);
+$backgroundColor: #071126;
+
+//$buttonHoverColor: rgba(255,219,97,1);
+
+$buttonFontSize: 1.1rem;
+$h2FontSize: 4rem;
+$h3FontSize: 1.6rem;
+
+@mixin text() {
+  font-size: 1.4rem;
+  letter-spacing: 0.1rem;
+  font-weight: 300;
+  backdrop-filter: blur(2px); // TODO:
+}
 
 @mixin flexCenter {
   display: flex;
@@ -20,12 +34,12 @@ $textBackgroundColor: #c6503c;
   height: inherit;
   transform: rotate($orientation);
   backdrop-filter: blur(1px); // TODO:
+  cursor: none;
 }
 
 @mixin flex($direction) {
   display: flex;
   flex-direction: $direction;
-  justify-content: center;
 }
 
 @mixin mobile($limit: 600px) {

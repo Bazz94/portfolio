@@ -1,11 +1,12 @@
 
+
 @mixin selectedButton{
-  color: #000;
+  color: black;
   background-color: $buttonHoverColor;
   text-align: center;
   transform: scale(1.04);
   margin: 0.25rem;
-  font-size: 1.1rem;
+  font-size: $buttonFontSize;
   clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
   cursor: pointer;
   &::before {
@@ -22,7 +23,7 @@
   color: $buttonColor;
   text-align: center;
   margin: 0.25rem;
-  font-size: 1.1rem;
+  font-size: $buttonFontSize;
   clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
   cursor: pointer;
   &:hover {
@@ -43,7 +44,7 @@
   @include flexCenter();
   height: 100vh;
   
-  .center{
+  .row{
     @include flex(row);
     height: 90%;
     width: 100%;
@@ -69,8 +70,7 @@
             position: absolute;
             top: -2.4rem;
             right: 2.7rem;
-            font-size: 1.5rem;
-            color: #eee;
+            font-size: $h3FontSize;
           }
           .image {
             @include imageInit(0deg);
@@ -107,7 +107,6 @@
         h1 {
           font-size: 8rem;
           text-align: center;
-          color: $textColor;
           letter-spacing: 0.8rem;
           @include mobile(1400px) {
             font-size: 6rem;
@@ -124,20 +123,12 @@
           width: clamp(300px, 90%, 1000px);
           padding: 1.1rem 10%;
           .text {
-            font-size: 1.4rem;
-            letter-spacing: 0.1rem;
+            @include text();
             text-align: justify;
-            color: $textColor;
-            font-weight: 300;
-            backdrop-filter: blur(2px); // TODO:
           }
           .text-red {
-            font-size: 1.4rem;
-            letter-spacing: 0.1rem;
+            @include text();
             text-align: justify;
-            color: $textColor;
-            font-weight: 300;
-            backdrop-filter: blur(2px); // TODO:
             background-color: $textBackgroundColor;
             clip-path: polygon(2% 0, 100% 0, 98% 100%, 0 100%);
             @include fadeInBackgroundColor();
@@ -181,12 +172,12 @@
               position: absolute;
               bottom: -2.3rem;
               left: 2.7rem;
-              font-size: 1.5rem;
-              color: #eee;
+              font-size: $h3FontSize;
             }
           .image {
             @include imageInit(180deg);
             position: absolute;
+            opacity: 0.98; //correcting image color
           }
           .project-list {
             @include flex(column);

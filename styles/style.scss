@@ -11,13 +11,14 @@
 
 body {
   position: absolute;
-  background-color: #071126;
+  background-color: $backgroundColor;
   margin: 0;
   width: calc(100vw - 16px);
   height: 100vh;
   overflow-x: hidden;
   font-family: 'Lato';
   margin-right: 16px; // space for scroll bar
+  color: $textColor;
   @include mobile {
     width: calc(calc(100vw - 16px) + 16px);
     margin-right: 0px;

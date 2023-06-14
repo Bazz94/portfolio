@@ -373,7 +373,7 @@ let actionLabel = document.getElementById('actionLabel');
 function mouseActionLabel(action, mouseDown) {
 
   if (action === Actions.GRAVITYWELL) {
-    if (interaction.size > 0.002) {
+    if (interaction.size > 0.1) {
       actionLabel.style.opacity = '1';
       pos = mouse;
       if (mouseDown) {

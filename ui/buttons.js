@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (j === i) {
           actionButtons[j].classList.remove('action-button');
           actionButtons[j].classList.add('selected-action-button');
+          localStorage.setItem('action', j);
         } else {
           actionButtons[j].classList.remove('selected-action-button');
           actionButtons[j].classList.add('action-button');
@@ -41,7 +42,12 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   // set the first element to already be selected
   setTimeout(() => {
-    actionButtons[0].click();
+    const action = localStorage.getItem('action');
+    if (action != null) {
+      actionButtons[action].click();
+    } else {
+      actionButtons[0].click();
+    }
   }, 100);
 
   const navButtons = document.querySelectorAll('.nav-button');
@@ -73,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   window.addEventListener('scroll', () => {
     //console.log(window.scrollY);
-    if (window.scrollY < 200) {
+    if (window.scrollY < 400) {
       for (let i = 0; i < navButtons.length; i++) {
         if( i === 0) {
           navButtons[i].classList.remove('nav-button');
