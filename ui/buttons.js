@@ -6,16 +6,13 @@ const textRed3 = document.getElementById('delay3');
 const homeMiddleSection = document.getElementById('home-middle');
 
 setTimeout(() => {
-  textRed2.classList.remove('text');
-  textRed2.classList.add('text-red');
+  textRed2.classList.add('red');
 }, 100);
 setTimeout(() => {
-  textRed1.classList.remove('text');
-  textRed1.classList.add('text-red');
+  textRed1.classList.add('red');
 }, 200);
 setTimeout(() => {
-  textRed3.classList.remove('text');
-  textRed3.classList.add('text-red');
+  textRed3.classList.add('red');
 }, 300);
 
 for (let i = 0; i < actionButtons.length; i++) {
@@ -34,7 +31,6 @@ for (let i = 0; i < actionButtons.length; i++) {
     if (i > 0) {
       
       homeMiddleSection.style.visibility = 'hidden';
-      console.log(homeMiddleSection.style.visibility);
     } else {
       homeMiddleSection.style.visibility = '';
     }

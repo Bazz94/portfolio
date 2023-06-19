@@ -1,0 +1,13 @@
+#project3 {
+  .column {
+    .gridbox {
+      .about-column {
+        p {
+          @include mobile(1265px) {
+            margin: 0rem !important;
+          }
+        }
+      }
+    }
+  }
+}

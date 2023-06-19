@@ -1,30 +1,40 @@
+const prevButtons = document.getElementsByClassName("prev");
+const nextButtons = document.getElementsByClassName("next");
 
-const prevButton = document.getElementById('prev');
-const nextButton = document.getElementById('next');
+const slidesIndex = [0,0,0];
 
-prevButton.addEventListener('click', function () {
-  showSlides(slideIndex += -1);
-});
+const slides = [document.getElementsByClassName("mySlides 1"),
+document.getElementsByClassName("mySlides 2"),
+document.getElementsByClassName("mySlides 3")
+];
 
-nextButton.addEventListener('click', function () {
-  showSlides(slideIndex += 1);
-});
+for (let i = 0; i < prevButtons.length; i++) {
+  prevButtons[i].addEventListener('click', () => {
+    let newIndex = slidesIndex[i] - 1;
+    newIndex = newIndex % slides[i].length;
+    newIndex = Math.abs(newIndex);
+    slidesIndex[i] = newIndex;
+    showSlides(newIndex, slides[i]);
+  });
+}
 
-let slides1 = document.getElementsByClassName("mySlides 1");
-let slides2 = document.getElementsByClassName("mySlides 2");
-let slides3 = document.getElementsByClassName("mySlides 3");
-let slideIndex = 1;
-showSlides(slideIndex, slides1);
-showSlides(slideIndex, slides2);
-showSlides(slideIndex, slides3);
+for (let i = 0; i < nextButtons.length; i++) {
+  nextButtons[i].addEventListener('click', () => {
+    let newIndex = slidesIndex[i] + 1;
+    newIndex = newIndex % slides[i].length;
+    slidesIndex[i] = newIndex;
+    showSlides(newIndex, slides[i]);
+  });
+}
+
+for (let i = 0; i < slides.length; i++) {
+  showSlides(slidesIndex[i], slides[i]);
+}
 
 function showSlides(n, slides) {
   let i;
-  
-  if (n > slides.length) { slideIndex = 1 }
-  if (n < 1) { slideIndex = slides.length }
   for (i = 0; i < slides.length; i++) {
     slides[i].style.display = "none";
   }
-  slides[slideIndex - 1].style.display = "block";
+  slides[n].style.display = "block";
 }
