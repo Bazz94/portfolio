@@ -132,11 +132,48 @@ canvas {
   border-radius: 50%;
 }
 
+.email {
+  position: absolute;
+  text-decoration: none;
+  color: rgba(237, 237, 237, 0.94);
+  top: 92%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 300;
+}
+.email:hover {
+  transform: translate(-50%, -50%) scale(1.03);
+  color: rgb(237, 237, 237);
+}
+
 .main {
   display: flex;
   flex-direction: column;
   justify-content: center;
   overflow-x: hidden;
+}
+
+#backToTopButton {
+  position: absolute;
+  bottom: -297%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 300;
+  color: rgba(237, 237, 237, 0.94);
+  text-decoration: none;
+  vertical-align: middle;
+  align-content: center;
+  padding: 0.3rem 0.5rem;
+  margin: 0.2rem;
+  font-size: 1rem;
+  letter-spacing: 0.05rem;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 1px solid rgba(237, 237, 237, 0.94);
+}
+#backToTopButton:hover {
+  background-color: rgba(237, 237, 237, 0.94);
+  color: black;
 }
 
 /* Home page */
@@ -696,5 +733,5 @@ canvas {
   font-size: 12px;
   padding: 8px 12px;
   position: absolute;
-  top: 0;
+  bottom: 1rem;
 }/*# sourceMappingURL=style.css.map */

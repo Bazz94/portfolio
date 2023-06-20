@@ -100,3 +100,9 @@ window.addEventListener('scroll', () => {
   }
 });
 
+const backToTopButton = document.getElementById('backToTopButton');
+
+backToTopButton.addEventListener('click', () => {
+  const targetSection = document.getElementById('performance-switch-container');
+  targetSection.scrollIntoView({ behavior: 'smooth' });
+})
