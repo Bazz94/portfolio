@@ -86,7 +86,7 @@ planet3.velocity.add(new THREE.Vector3(0, -0.182, 0));
 let moon = new Body(scene, 0.03, 0xcccccc);
 scene.add(moon.mesh);
 moon.mesh.position.set(-13.7, 0, 0);
-moon.velocity.add(new THREE.Vector3(-0.02, -0.275, 0.00));
+moon.velocity.add(new THREE.Vector3(-0.015, -0.27, 0.00));
 
 let planet4 = new Body(scene, 0.31, 0xb6a1e2);
 scene.add(planet4.mesh);
@@ -143,6 +143,15 @@ let actionSwitch = document.getElementById('action-switch');
 let disableButton = document.getElementById('disabled');
 let spawnPlanetButton = document.getElementById('spawnPlanet');
 let gravityWellButton = document.getElementById('gravityWell');
+const actionHints = document.getElementById('action-hints');
+disableButton.addEventListener('mouseover',onMouseOver);
+spawnPlanetButton.addEventListener('mouseover', onMouseOver);
+gravityWellButton.addEventListener('mouseover', onMouseOver);
+disableButton.addEventListener('mouseout', onMouseOut);
+spawnPlanetButton.addEventListener('mouseout', onMouseOut);
+gravityWellButton.addEventListener('mouseout', onMouseOut);
+
+
 
 const Actions = {
   NONE: 'none',
@@ -218,13 +227,18 @@ function animate() {
     }
     if (spawnPlanetButton.className === 'selected-action-button') {
       action = Actions.CREATEPLANET;
+      actionHints.innerText = 'Hint: Click and drag.';
+      if (newPlanet) { 
+        actionHints.innerText = 'Hint: Refresh the page';
+      }
     }
     if (gravityWellButton.className === 'selected-action-button') {
       action = Actions.GRAVITYWELL;
+      actionHints.innerText = 'Hint: Click and hold';
     }
 
-    //console.log(action);
-    if (action === Actions.GRAVITYWELL) {
+    //console.log(action); 
+    if (action === Actions.GRAVITYWELL && !mouseOver) {
       if (isMouseDown) { /* empty */ 
         interaction.mesh.position.set(hitscan.x, hitscan.y, 0);
         interaction.size = Math.min(interaction.size + 0.03, 1) ;
@@ -234,7 +248,7 @@ function animate() {
         interaction.mesh.material.opacity = Math.max(interaction.mesh.material.opacity - 0.02, 0.1)
       }
     }
-    if (action == Actions.CREATEPLANET) {
+    if (action == Actions.CREATEPLANET && !mouseOver) {
       if (isMouseDown) {
         if (!newPlanet) {
           mouseStart = hitscan.clone();
@@ -367,12 +381,22 @@ function handleMouseMove(event) {
   hitscan.copy(camera.position).add(vec.multiplyScalar(distance));
 }
 
+let mouseOver = false;
+function onMouseOver() {
+  mouseOver = true;
+  console.log(mouseOver);
+}
+function onMouseOut() {
+  mouseOver = false;
+  console.log(mouseOver);
+}
+
 let pos = false; // set mouse position when mouse down
 let firedOnce = null;  // makes sure create planet label only appears once
 let actionLabel = document.getElementById('actionLabel');
 function mouseActionLabel(action, mouseDown) {
 
-  if (action === Actions.GRAVITYWELL) {
+  if (action === Actions.GRAVITYWELL && !mouseOver) {
     if (interaction.size > 0.1) {
       actionLabel.style.opacity = '1';
       pos = mouse;
@@ -388,7 +412,7 @@ function mouseActionLabel(action, mouseDown) {
     }
   } 
 
-  if (action === Actions.CREATEPLANET) {
+  if (action === Actions.CREATEPLANET && !mouseOver) {
     if (mouseDown) {
       if (firedOnce === null) {
         firedOnce = false;
@@ -415,3 +439,4 @@ function mouseActionLabel(action, mouseDown) {
     }
   }
 }
+

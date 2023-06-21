@@ -240,6 +240,13 @@ canvas {
   top: 1.6rem;
   right: 1.4rem;
 }
+.home .row .actions .container .stack #action-hints {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0.5rem;
+  font-weight: 300;
+  color: rgba(237, 237, 237, 0.94);
+}
 .home .row .actions .spacer {
   height: 50%;
   width: 100%;

@@ -4,6 +4,7 @@ const textRed1 = document.getElementById('delay1');
 const textRed2 = document.getElementById('delay2');
 const textRed3 = document.getElementById('delay3');
 const homeMiddleSection = document.getElementById('home-middle');
+const actionHints = document.getElementById('action-hints');
 
 setTimeout(() => {
   textRed2.classList.add('red');
@@ -29,10 +30,11 @@ for (let i = 0; i < actionButtons.length; i++) {
       }
     }
     if (i > 0) {
-      
       homeMiddleSection.style.visibility = 'hidden';
+      actionHints.style.visibility = '';
     } else {
       homeMiddleSection.style.visibility = '';
+      actionHints.style.visibility = 'hidden';
     }
   });
 }

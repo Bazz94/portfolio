@@ -87,6 +87,14 @@
             right: 1.4rem;
             // action buttons
           }
+
+          #action-hints {
+            position: absolute;
+            bottom: -1.5rem;
+            left: 0.5rem;
+            font-weight: 300;
+            color: rgba(237, 237, 237, 0.94);
+          }
         }
       }
       .spacer {
