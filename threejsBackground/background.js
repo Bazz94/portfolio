@@ -11,10 +11,8 @@
 // background: #0b1a3b
 
 import * as THREE from 'three';
-import { OrbitControls }  from 'three/examples/jsm/controls/OrbitControls';
 import Body from './body.js';
 import LineTrail from './effects.js';
-import { DOMAIN } from './../private.js';
 
 
 const isDesktopView = window.innerWidth > 600;
@@ -45,19 +43,10 @@ if (!isDesktopView) {
   camera.position.set(0,0,-54);
 }
 camera.lookAt(0,0,0);
-//camera.position.y = 32;
-
-// temp controls
-//const controls = new OrbitControls(camera, renderer.domElement);
-// controls.enableZoom = false;
-// controls.zoom0 = 10;
-// controls.enableRotate = false;
-
 
 // Set up helpers
 const gridHelper = new THREE.GridHelper(200, 100);
 gridHelper.rotateX(90 * (Math.PI / 180)); //grid is on z axis now
-// scene.add(gridHelper);
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.04);
 scene.add(ambientLight);
@@ -172,31 +161,32 @@ if (checked === undefined) {
 } else {
   actionSwitch.checked = checked === 'true' ? true : false;
 }
-if (!isDesktopView) {
-  actionSwitch.checked = true;
-}
+
 renderer.render(scene, camera);
 //render loop locked to 30fps
 function animate() {
   requestAnimationFrame(animate);
-  if (actionSwitch.checked) {
-    if (checked != true) {
-      checked = true;
-      localStorage.setItem('pMode', true);
-    } 
-  } else {
-    if (checked != false) {
-      checked = false;
-      localStorage.setItem('pMode', false);
-    } 
-  }
-  if (actionSwitch.checked === true) {
-    return false;
-  }
   delta += clock.getDelta();
   if (delta > interval) {
     /////////////////////////////////////////////////////////////////////
-    
+
+    if (actionSwitch.checked) {
+      if (checked != true) {
+        checked = true;
+        localStorage.setItem('pMode', true);
+      }
+    } else {
+      if (checked != false) {
+        checked = false;
+        localStorage.setItem('pMode', false);
+      }
+    }
+    if (actionSwitch.checked === true) {
+      camera.position.y = getCameraY();
+      renderer.render(scene, camera);
+      delta = delta % interval;
+      return false;
+    }
 
     sun.applyGravity();
     sun.mesh.position.add(sun.velocity.clampLength(0, 1));
@@ -237,7 +227,6 @@ function animate() {
       actionHints.innerText = 'Hint: Click and hold';
     }
 
-    //console.log(action); 
     if (action === Actions.GRAVITYWELL && !mouseOver) {
       if (isMouseDown) { /* empty */ 
         interaction.mesh.position.set(hitscan.x, hitscan.y, 0);
@@ -303,8 +292,8 @@ function animate() {
       newPlanetTrailLines.updateLines();
     }
     mouseActionLabel(action, isMouseDown);
+
     camera.position.y = getCameraY();
-    //controls.update();
 
     /////////////////////////////////////////////////////////////////////
     renderer.render(scene, camera);
@@ -343,13 +332,11 @@ function addStars(number) {
 let isMouseDown = false;
 function onMouseDown() {
   isMouseDown = true;
-  //console.log('Mouse click down');
 }
 
 // Mouse up event handler
 function onMouseUp() {
   isMouseDown = false;
-  //console.log('Mouse click up');
 }
 
 function getCameraY() {
@@ -360,12 +347,11 @@ function getCameraY() {
   let y;
   y = scrollPosition * -1;
   y = scrollPosition / maxScrollPosition * scrollDistance;
-  //console.log(y, scrollPosition);
   return y;
 }
 
-let vec = new THREE.Vector3(); // create once and reuse
-let hitscan = new THREE.Vector3(); // create once and reuse
+let vec = new THREE.Vector3();
+let hitscan = new THREE.Vector3();
 let mouse = {x: 0, y: 0};
 function handleMouseMove(event) {
   // Get the mouse position relative to the element
