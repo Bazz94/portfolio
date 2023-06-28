@@ -39,19 +39,15 @@ const popupMessageP = document.getElementById('popup-message');
 
 const popupMessages = [
  // site 1
-  `You will need to login to access the site. You can sign up with a fake email
- (just make sure it has the format of an email address). 
- 
- Since there may not be others users to chat to, you can pick 'AI is Dangerous' and 'For' to debate
- ChatGPT for demo purposes`,
+  `You will need to login to access the site. You can sign up with a fake email (just make sure it has the format of an email address).
+  
+  Since there may not be others users to chat to, you can pick 'AI is Dangerous' and 'For' to debateChatGPT for demo purposes`,
  // site 2
- `The community ranking page is available without logging in but to create your own list 
- and affect the community ranking you need to create an account. 
+ `The community ranking page is available without logging in but to create your own list and affect the community ranking, you will need to create an account. 
  
  You can use a fake email (just make sure it has the format of an email address)`,
  // site 3
- `You will need to login to access the site. You can sign up with a fake email
- (just make sure it has the format of an email address). `,
+ `You will need to login to access the site. You can sign up with a fake email (just make sure it has the format of an email address). `,
 ];
 
 for (let i = 0; i < toSiteButtons.length; i++) {
