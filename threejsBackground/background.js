@@ -141,7 +141,6 @@ spawnPlanetButton.addEventListener('mouseout', onMouseOut);
 gravityWellButton.addEventListener('mouseout', onMouseOut);
 
 
-
 const Actions = {
   NONE: 'none',
   GRAVITYWELL: 'gravityWell',
@@ -153,13 +152,14 @@ let mouseStart, mouseEnd, mouseTravel, mouseTravelDistance;
 let newPlanet;
 let newPlanetTrailLines;
 let newPlanetVelocity;
-let checked = localStorage.getItem('pMode');
-if (checked === undefined) {
-  localStorage.setItem('pMode', false);
-  actionSwitch.checked = false;
-  checked = false;
+let checked;
+let isLocalStorageAvailable = checkLocalStorageAvailability();
+if (isLocalStorageAvailable) {
+  checked = localStorage.getItem('pMode') === 'true' ? true : false;
+  actionSwitch.checked = checked;
 } else {
-  actionSwitch.checked = checked === 'true' ? true : false;
+  checked = false;
+  actionSwitch.checked = false;
 }
 
 renderer.render(scene, camera);
@@ -171,14 +171,18 @@ function animate() {
     /////////////////////////////////////////////////////////////////////
 
     if (actionSwitch.checked) {
-      if (checked != true) {
+      if (checked === false) {
         checked = true;
-        localStorage.setItem('pMode', true);
+        if (isLocalStorageAvailable) {
+          localStorage.setItem('pMode', true);
+        } 
       }
     } else {
-      if (checked != false) {
+      if (checked === true) {
         checked = false;
-        localStorage.setItem('pMode', false);
+        if (isLocalStorageAvailable) {
+          localStorage.setItem('pMode', false);
+        }
       }
     }
     if (actionSwitch.checked === true) {
@@ -426,3 +430,13 @@ function mouseActionLabel(action, mouseDown) {
   }
 }
 
+function checkLocalStorageAvailability() {
+  try {
+    var testKey = 'test';
+    window.localStorage.setItem(testKey, testKey);
+    window.localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

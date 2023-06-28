@@ -6,6 +6,8 @@ const textRed3 = document.getElementById('delay3');
 const homeMiddleSection = document.getElementById('home-middle');
 const actionHints = document.getElementById('action-hints');
 
+let isLocalStorageAvailable = checkLocalStorageAvailability();
+
 setTimeout(() => {
   textRed2.classList.add('red');
 }, 100);
@@ -23,7 +25,9 @@ for (let i = 0; i < actionButtons.length; i++) {
       if (j === i) {
         actionButtons[j].classList.remove('action-button');
         actionButtons[j].classList.add('selected-action-button');
-        localStorage.setItem('action', j);
+        if (isLocalStorageAvailable) {
+          localStorage.setItem('action', j);
+        }
       } else {
         actionButtons[j].classList.remove('selected-action-button');
         actionButtons[j].classList.add('action-button');
@@ -40,7 +44,10 @@ for (let i = 0; i < actionButtons.length; i++) {
 }
 // set the first element to already be selected
 setTimeout(() => {
-  const action = localStorage.getItem('action');
+  let action = null;
+  if (isLocalStorageAvailable) {
+    action = localStorage.getItem('action');
+  } 
   if (action != null) {
     actionButtons[action].click();
   } else {
@@ -107,4 +114,16 @@ const backToTopButton = document.getElementById('backToTopButton');
 backToTopButton.addEventListener('click', () => {
   const targetSection = document.getElementById('performance-switch-container');
   targetSection.scrollIntoView({ behavior: 'smooth' });
-})
+});
+
+
+function checkLocalStorageAvailability() {
+  try {
+    var testKey = 'test';
+    window.localStorage.setItem(testKey, testKey);
+    window.localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
