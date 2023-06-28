@@ -641,7 +641,7 @@ canvas {
 
 /* project2 page */
 #project2 .column .gridbox .about-column p {
-  margin-bottom: 2.2rem !important;
+  margin-bottom: 0.5rem !important;
 }
 @media (max-width: 1265px) {
   #project2 .column .gridbox .about-column p {
