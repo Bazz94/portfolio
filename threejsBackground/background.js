@@ -129,16 +129,19 @@ document.addEventListener('mouseup', onMouseUp, false);
 document.addEventListener('mousemove', handleMouseMove);
 window.addEventListener('resize', onResize);
 let actionSwitch = document.getElementById('action-switch');
+let switchContainer = document.getElementById('performance-switch-container');
 let disableButton = document.getElementById('disabled');
 let spawnPlanetButton = document.getElementById('spawnPlanet');
 let gravityWellButton = document.getElementById('gravityWell');
+let projectList = document.getElementById('project-list');
+let actionList = document.getElementById('action-list');
 const actionHints = document.getElementById('action-hints');
-disableButton.addEventListener('mouseover',onMouseOver);
-spawnPlanetButton.addEventListener('mouseover', onMouseOver);
-gravityWellButton.addEventListener('mouseover', onMouseOver);
-disableButton.addEventListener('mouseout', onMouseOut);
-spawnPlanetButton.addEventListener('mouseout', onMouseOut);
-gravityWellButton.addEventListener('mouseout', onMouseOut);
+projectList.addEventListener('mouseover',onMouseOver);
+actionList.addEventListener('mouseover',onMouseOver);
+switchContainer.addEventListener('mouseover', onMouseOver);
+projectList.addEventListener('mouseout', onMouseOut);
+actionList.addEventListener('mouseout', onMouseOut);
+switchContainer.addEventListener('mouseout', onMouseOut);
 
 
 const Actions = {
@@ -374,11 +377,9 @@ function handleMouseMove(event) {
 let mouseOver = false;
 function onMouseOver() {
   mouseOver = true;
-  console.log(mouseOver);
 }
 function onMouseOut() {
   mouseOver = false;
-  console.log(mouseOver);
 }
 
 let pos = false; // set mouse position when mouse down

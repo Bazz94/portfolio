@@ -5,8 +5,13 @@ const textRed2 = document.getElementById('delay2');
 const textRed3 = document.getElementById('delay3');
 const homeMiddleSection = document.getElementById('home-middle');
 const actionHints = document.getElementById('action-hints');
-
+let actionSwitch = document.getElementById('action-switch');
 let isLocalStorageAvailable = checkLocalStorageAvailability();
+
+actionSwitch.addEventListener('click',() => {
+  if (!actionSwitch.checked)
+  actionButtons[0].click();
+});
 
 setTimeout(() => {
   textRed2.classList.add('red');
@@ -21,24 +26,36 @@ setTimeout(() => {
 for (let i = 0; i < actionButtons.length; i++) {
   actionButtons[i].addEventListener('click', function () {
     // Change the color of the clicked button and reset others
-    for (let j = 0; j < actionButtons.length; j++) {
-      if (j === i) {
-        actionButtons[j].classList.remove('action-button');
-        actionButtons[j].classList.add('selected-action-button');
-        if (isLocalStorageAvailable) {
-          localStorage.setItem('action', j);
+    if (!actionSwitch.checked) {
+      for (let j = 0; j < actionButtons.length; j++) {
+        if (j === i) {
+          actionButtons[j].classList.remove('action-button');
+          actionButtons[j].classList.add('selected-action-button');
+          if (isLocalStorageAvailable) {
+            localStorage.setItem('action', j);
+          }
+        } else {
+          actionButtons[j].classList.remove('selected-action-button');
+          actionButtons[j].classList.add('action-button');
         }
-      } else {
-        actionButtons[j].classList.remove('selected-action-button');
-        actionButtons[j].classList.add('action-button');
       }
-    }
-    if (i > 0) {
-      homeMiddleSection.style.visibility = 'hidden';
-      actionHints.style.visibility = '';
+      if (i > 0) {
+        homeMiddleSection.style.visibility = 'hidden';
+        actionHints.style.visibility = '';
+      } else {
+        homeMiddleSection.style.visibility = '';
+        actionHints.style.visibility = 'hidden';
+      }
     } else {
-      homeMiddleSection.style.visibility = '';
-      actionHints.style.visibility = 'hidden';
+      if (i === 0) {
+        actionButtons[i].classList.remove('action-button');
+        actionButtons[i].classList.add('selected-action-button');
+        if (isLocalStorageAvailable) {
+          localStorage.setItem('action', i);
+        }
+        homeMiddleSection.style.visibility = '';
+        actionHints.style.visibility = 'hidden';
+      }
     }
   });
 }
@@ -51,6 +68,8 @@ setTimeout(() => {
   if (action != null) {
     actionButtons[action].click();
   } else {
+    actionButtons[0].classList.remove('action-button');
+    actionButtons[0].classList.add('selected-action-button');
     actionButtons[0].click();
   }
 }, 100);
