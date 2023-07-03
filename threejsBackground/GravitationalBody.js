@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
 
-class Body {
-  constructor(scene, size = 0.2, color = 0xffffff, isLightSource = false, interaction = false, ) {
+class GravitationalBody {
+  constructor(scene, size = 0.2, color = 0xffffff, isLightSource = false, interaction = false, newPlanet = false ) {
     this.scene = scene;
     this.color = color; // hex color
     this.size = size; // int
@@ -24,14 +24,18 @@ class Body {
       this.light = new THREE.PointLight(0xffffff);
       this.mesh.add(this.light);
     }
-    this.trail = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0)];
     this.lineTrail;
     this.collisionOccurred = false;
+    this.isNewPlanet = newPlanet;
+    this.disabled = newPlanet;
   }
 
 
 
   applyGravity() {
+    if (this.disabled) {
+      return false;
+    }
     if (this.gravityArray == null || this.gravityArray.length == 0) {
       throw Error('gravity array not set');
     }
@@ -83,6 +87,11 @@ class Body {
     if (this.interaction) {
       return null;
     }
+    if (this.isNewPlanet && obj.isLightSource) {
+      this.disabled = true;
+      this.scene.remove(this.mesh);
+      return null;
+    }
     if (obj.interaction) {
       return null;
     }
@@ -107,8 +116,24 @@ class Body {
     v1_final = (m1 * v1_initial + m2 * v2_initial - m2 * (v1_initial - v2_initial)) / (m1 + m2);
     return v1_final;
   }
-  //<a href="https://www.freepik.com/free-vector/abstract-splashed-watercolor-textured-background_2632682.htm#query=cloud%20texture&position=16&from_view=keyword&track=ais">Image by rawpixel.com</a> on Freepik
 }
 
+function makeStars(number) {
+  const geometry = new THREE.BufferGeometry();
+  const vertices = [];
+  const material = new THREE.PointsMaterial({ size: 0.05 });
+  for (let i = 0; i < number; i++) {
+    const MIN_DISTANCE = 21;
+    let [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(300));
 
-export default Body;
+    while (Math.sqrt(x * x + y * y + z * z) < MIN_DISTANCE) {
+      [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(300));
+    }
+    vertices.push(x, y, z);
+  }
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  const particles = new THREE.Points(geometry, material);
+  return particles;
+}
+
+export { GravitationalBody, makeStars };

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-// requires obj of type Body
+// requires obj of type GravitationalBody
 class LineTrail {
   constructor(scene, obj, time = 1.5) {
     this.obj = obj;
@@ -23,7 +23,7 @@ class LineTrail {
     }
   }
 
-  updateLines = () => {
+  updateLines() {
     if (this.disabled) {
       return false;
     }
