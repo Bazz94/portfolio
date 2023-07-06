@@ -2,20 +2,23 @@ import * as THREE from 'three';
 
 
 class GravitationalBody {
-  constructor(scene, size = 0.2, color = 0xffffff, isLightSource = false, interaction = false, newPlanet = false ) {
+  constructor(scene, size = 0.2, color = 0xffffff, isLightSource = false, isInteraction = false, isNewPlanet = false ) {
     this.scene = scene;
     this.color = color; // hex color
     this.size = size; // int
     this.velocity = new THREE.Vector3(0,0,0); // THREE.vector3
     this.isLightSource = isLightSource; // bool
     const geometry = new THREE.SphereGeometry(size, 32, 32);
+    if (isInteraction) {
+      this.size = 0.1;
+    }
     let material;
-    if (isLightSource || interaction) {
+    if (isLightSource || isInteraction) {
       material = new THREE.MeshBasicMaterial({ color: color ,transparent: true});
     } else {
       material = new THREE.MeshStandardMaterial({ color: color });
     }
-    this.interaction = interaction;
+    this.isInteraction = isInteraction;
     const mesh = new THREE.Mesh(geometry, material);
     this.mesh = mesh;
     this.gravityArray = [];
@@ -26,8 +29,8 @@ class GravitationalBody {
     }
     this.lineTrail;
     this.collisionOccurred = false;
-    this.isNewPlanet = newPlanet;
-    this.disabled = newPlanet;
+    this.isNewPlanet = isNewPlanet;
+    this.disabled = isNewPlanet;
   }
 
 
@@ -84,7 +87,7 @@ class GravitationalBody {
   }
 
   applyCollision(obj) {
-    if (this.interaction) {
+    if (this.isInteraction) {
       return null;
     }
     if (this.isNewPlanet && obj.isLightSource) {
@@ -92,7 +95,7 @@ class GravitationalBody {
       this.scene.remove(this.mesh);
       return null;
     }
-    if (obj.interaction) {
+    if (obj.isInteraction) {
       return null;
     }
     if (this.isLightSource) {
