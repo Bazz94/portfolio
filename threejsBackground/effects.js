@@ -11,12 +11,14 @@ class LineTrail {
     this.lines = [];
     this.scene = scene;
     this.disabled = false;
+    this.pause = false;
+    this.pauseArray = [];
   }
 
-  timerDone(lines, line) {
+  removeLine(line) {
     this.scene.remove(line);
-    if (lines.length > 1) {
-      lines.shift();
+    if (this.lines.length > 1) {
+      this.lines.shift();
     }
     if (line.material.map) {
       line.material.map.dispose();
@@ -48,11 +50,11 @@ class LineTrail {
         const opacityDecay = 0.015 / this.time;
         this.lines.forEach((item) => {
           item.material.opacity = Math.max(item.material.opacity - opacityDecay, 0);
+          if (item.material.opacity === 0) {
+            this.removeLine(item);
+          }
         });
         this.lines.push(line);
-        setTimeout(() => {
-          this.timerDone(this.lines, line);
-        }, this.time * 1000);
         this.count = 2;
       }
       this.thirdPos.set(pos2.x, pos2.y, pos2.z);

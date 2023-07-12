@@ -37,13 +37,16 @@ function handleActions( hitscan, mouse, sun, gravityWell, newPlanet){
     if (isMouseDown) { /* empty */
       gravityWell.mesh.position.set(hitscan.x, hitscan.y, 0);
       gravityWell.size = Math.min(gravityWell.size + 0.03, 1);
-      gravityWell.mesh.material.opacity = Math.min(gravityWell.mesh.material.opacity + 0.01, 1);
+      gravityWell.mesh.material.opacity = Math.min(gravityWell.mesh.material.opacity + 0.05, 1);
     } else {
-      gravityWell.size = Math.max(gravityWell.size - 0.06, 0.002);
-      gravityWell.mesh.material.opacity = Math.max(gravityWell.mesh.material.opacity - 0.02, 0.1)
+      gravityWell.size = Math.max(gravityWell.size - 0.06, 0.05);
+      gravityWell.mesh.material.opacity = Math.max(gravityWell.mesh.material.opacity - 0.1, 0.5)
     }
   }
   if (action == Actions.CREATEPLANET && !mousePosInvalid) {
+    if (!gravityWell.mesh.position.equals(new THREE.Vector3(0, 0, 0))) {
+      gravityWell.mesh.position.set(0,0,0);
+    }
     if (isMouseDown) {
       if (!hasSpawned) {
         hasSpawned = true;
